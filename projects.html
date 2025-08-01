@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Projects - ARIT General Construction</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <h1 class="logo">ARIT Construction</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="projects.html" class="active">Projects</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Projects Overview -->
+    <section class="section">
+        <h2 class="section-title">Our Projects</h2>
+        <p class="section-subtitle">Explore some of our standout projects across Washington, DC — from embassies to
+            modern homes.</p>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <h3>Luxury Townhomes – Columbia Heights</h3>
+                <p>Four-unit residential development with green building techniques, rooftop terraces, and contemporary
+                    aesthetics.</p>
+            </div>
+            <div class="service-card">
+                <h3>Retail Space – H Street Corridor</h3>
+                <p>Design-build retail storefront with custom facade, ADA-compliant interiors, and tenant-ready
+                    utilities.</p>
+            </div>
+            <div class="service-card">
+                <h3>Modern ADU – Petworth</h3>
+                <p>Detached accessory dwelling unit featuring smart home systems, energy-efficient design, and private
+                    patio integration.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="section">
+        <h2 class="section-title">Project Highlights</h2>
+        <p class="section-subtitle">Take a closer look at our work across residential, commercial, and embassy
+            properties in Washington, DC.</p>
+
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="assets/projects/gallery1.png" alt="Embassy Renovation DC">
+                <div class="overlay">Embassy Renovation</div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/projects/gallery2.png" alt="Luxury Townhomes">
+                <div class="overlay">Luxury Townhomes</div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/projects/gallery3.png" alt="Retail Space Fit-Out">
+                <div class="overlay">Retail Space Fit-Out</div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/projects/gallery4.png" alt="Modern Home Exterior">
+                <div class="overlay">Modern Home</div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/projects/gallery5.png" alt="Custom Interior Build">
+                <div class="overlay">Interior Build</div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/projects/gallery6.png" alt="ADU Construction">
+                <div class="overlay">ADU Construction</div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-banner">
+        <h2>Have a project in mind?</h2>
+        <a href="contact.html" class="btn">Let's Build Together</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 ARIT General Construction LLC | Washington, DC | (202) 288‑9129</p>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <img src="" alt="Enlarged Project" />
+    </div>
+
+    <script>
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = lightbox.querySelector('img');
+        const galleryImgs = document.querySelectorAll('.gallery-grid img');
+
+        galleryImgs.forEach(img => {
+            img.addEventListener('click', () => {
+                lightboxImg.src = img.src;
+                lightbox.style.display = 'flex';
+            });
+        });
+
+        lightbox.addEventListener('click', () => {
+            lightbox.style.display = 'none';
+        });
+    </script>
+
+</body>
+
+</html>
