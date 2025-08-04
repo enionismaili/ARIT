@@ -12,14 +12,21 @@
 <body>
 
     <!-- Navbar -->
-    <header class="header">
+    <header>
         <nav class="navbar">
             <h1 class="logo">ARIT Construction</h1>
-            <ul class="nav-links">
+
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+
+            <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="services.html">Services</a></li>
-                <li><a href="projects.html" class="active">Projects</a></li>
+                <li><a href="projects.html">Projects</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
         </nav>
@@ -149,6 +156,9 @@
             lightbox.style.display = 'none';
         });
     </script>
+
+
+    <script src="script.js"></script>
 
 </body>
 
