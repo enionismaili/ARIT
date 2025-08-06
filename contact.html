@@ -41,12 +41,17 @@
     <!-- Contact Form -->
     <section class="section">
         <h2>Send Us a Message</h2>
-        <form action="https://formspree.io/f/xpwlyenp" method="POST">
+        <form id="contact-form" action="https://formspree.io/f/xpwlyenp" method="POST">
+
             <input type="text" name="name" placeholder="Your Name" required />
             <input type="email" name="email" placeholder="Your Email" required />
             <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
             <button type="submit">Send Message</button>
         </form>
+
+        <div id="success-message" style="display: none; color: green; margin-top: 1rem;">
+            ✅ Thank you! We've received your message and will get back to you as soon as possible.
+        </div>
     </section>
 
     <!-- Footer -->
@@ -85,11 +90,6 @@
             &copy; 2025 ARIT General Construction LLC
         </div>
     </footer>
-
-
-
-
-
 
     <script src="script.js"></script>
 
