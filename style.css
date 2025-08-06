@@ -5,6 +5,14 @@
   box-sizing: border-box;
 }
 
+input,
+textarea,
+button,
+select {
+  font-family: inherit;
+}
+
+
 /* ===== BASE STYLES ===== */
 body {
   font-family: 'Poppins', sans-serif;
