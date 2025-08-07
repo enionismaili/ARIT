@@ -79,3 +79,77 @@ document.querySelectorAll(".nav-links a").forEach(link => {
     link.classList.add("active");
   }
 });
+
+
+const track = document.getElementById("carouselTrack");
+const cards = document.querySelectorAll(".review-card");
+const container = document.querySelector(".carousel-container");
+
+let index = 0;
+let interval;
+
+// Determine visible cards based on screen width
+function getVisibleCardsCount() {
+  if (window.innerWidth <= 600) return 1;
+  if (window.innerWidth <= 991) return 2;
+  return 3;
+}
+
+// Clone visible cards for seamless loop
+const visibleCount = getVisibleCardsCount();
+for (let i = 0; i < visibleCount; i++) {
+  const clone = cards[i].cloneNode(true);
+  track.appendChild(clone);
+}
+
+function getCardFullWidth() {
+  const card = track.querySelector(".review-card");
+  const style = window.getComputedStyle(card);
+  const width = card.offsetWidth;
+  const gap = parseFloat(style.marginRight) || 24; // fallback
+  return width + gap;
+}
+
+function slideCarousel() {
+  index++;
+  const cardWidth = getCardFullWidth();
+  track.style.transform = `translateX(-${index * cardWidth}px)`;
+
+  if (index >= cards.length) {
+    setTimeout(() => {
+      track.style.transition = "none";
+      track.style.transform = `translateX(0px)`;
+      index = 0;
+      setTimeout(() => {
+        track.style.transition = "transform 0.5s ease-in-out";
+      }, 20);
+    }, 500);
+  }
+}
+
+function startAutoSlide() {
+  interval = setInterval(slideCarousel, 3000);
+}
+
+function stopAutoSlide() {
+  clearInterval(interval);
+}
+
+// Start
+startAutoSlide();
+
+// Pause on hover
+container.addEventListener("mouseenter", stopAutoSlide);
+container.addEventListener("mouseleave", startAutoSlide);
+
+// Optional: reset on window resize
+window.addEventListener("resize", () => {
+  stopAutoSlide();
+  index = 0;
+  track.style.transition = "none";
+  track.style.transform = `translateX(0px)`;
+  setTimeout(() => {
+    track.style.transition = "transform 0.5s ease-in-out";
+  }, 20);
+  startAutoSlide();
+});

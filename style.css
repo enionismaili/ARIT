@@ -80,7 +80,7 @@ header {
 .navbar {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px 40px;
+  padding: 12px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -219,15 +219,17 @@ header {
 
 /* ===== HERO SECTION ===== */
 .hero {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
-    url('assets/home/hero.png') center/cover no-repeat;
-  height: 90vh;
+  height: calc(100vh - 70px);
+  min-height: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   color: white;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+    url('assets/home/hero.png') center/cover no-repeat;
 }
+
 
 .hero-content {
   max-width: 700px;
@@ -731,4 +733,54 @@ button[type="submit"]:hover {
 
 .gallery-item:hover .overlay {
   opacity: 1;
+}
+
+
+
+
+.reviews-carousel {
+  padding: 4rem 2rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.carousel-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  padding: 0 1rem;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 1.5rem;
+  transition: transform 0.5s ease-in-out;
+  padding-bottom: 10px;
+}
+
+.review-card {
+  flex: 0 0 calc((100% - 3rem) / 3);
+  /* Default: 3 cards */
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  box-sizing: border-box;
+}
+
+/* Tablet: 2 cards */
+@media (max-width: 991px) {
+  .review-card {
+    flex: 0 0 calc((100% - 1.5rem) / 2);
+    /* 2 cards, 1 gap */
+  }
+}
+
+/* Mobile: 1 card */
+@media (max-width: 600px) {
+  .review-card {
+    flex: 0 0 100%;
+  }
 }
