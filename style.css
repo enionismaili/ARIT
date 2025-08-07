@@ -14,12 +14,50 @@ select {
 
 
 /* ===== BASE STYLES ===== */
-body {
+/* body {
   font-family: 'Poppins', sans-serif;
   background-color: #f9f9f9;
   color: #1f2937;
   line-height: 1.6;
+} */
+
+:root {
+  --font-heading: 'Clash Display', sans-serif;
+  --font-body: 'Be Vietnam Pro', sans-serif;
 }
+
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  color: #1f2937;
+  line-height: 1.7;
+}
+
+
+h1,
+h2,
+h3,
+.logo {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+}
+
+
+
+
+@font-face {
+  font-family: 'Monument Extended';
+  src: url('/fonts/MonumentExtended-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
 
 a {
   text-decoration: none;
@@ -74,7 +112,7 @@ header {
   transition: all 0.3s ease;
 }
 
-/* ===== NAV LINKS ===== */
+/* ===== NAV LINKS (DESKTOP) ===== */
 .nav-links {
   display: flex;
   gap: 30px;
@@ -96,6 +134,18 @@ header {
 @media (max-width: 768px) {
   .hamburger {
     display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    z-index: 1001;
+    /* above the menu */
+  }
+
+  .hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    transition: 0.3s;
   }
 
   .nav-links {
@@ -112,7 +162,11 @@ header {
     gap: 20px;
     background-color: transparent;
     backdrop-filter: none;
-    transition: max-height 0.3s ease, padding 0.3s ease, background-color 0.3s ease, backdrop-filter 0.3s ease;
+    transition:
+      max-height 0.3s ease,
+      padding 0.3s ease,
+      background-color 0.3s ease,
+      backdrop-filter 0.3s ease;
   }
 
   .nav-links.open {
@@ -121,7 +175,6 @@ header {
     background-color: rgba(31, 41, 55, 0.4);
     /* semi-transparent navy */
     backdrop-filter: blur(12px);
-    /* apply blur */
   }
 
   .nav-links li {
@@ -136,7 +189,30 @@ header {
     font-size: 1.2rem;
     color: white;
   }
+
+  /* Hide nav-links in desktop by default */
+  .nav-links {
+    display: flex;
+  }
+
+  @media (min-width: 769px) {
+    .hamburger {
+      display: none;
+    }
+
+    .nav-links {
+      position: static;
+      flex-direction: row;
+      gap: 30px;
+      padding: 0;
+      max-height: none;
+      background-color: transparent;
+      backdrop-filter: none;
+      overflow: visible;
+    }
+  }
 }
+
 
 
 
