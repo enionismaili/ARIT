@@ -7,72 +7,130 @@
     <meta name="description"
         content="ARIT General Construction in Washington DC offers tuck pointing, exterior paint, home improvement, repairs, minor plumbing, projects, carpentry, and roofing for flat roofs.">
     <title>ARIT General Construction | Tuck Pointing, Exterior Paint, Carpentry & Flat Roofing in Washington DC</title>
-    <link rel="canonical" href="https://www.aritconstruction.com/">
+    <link rel="canonical" href="https://www.aritconstruction.com/" />
     <link rel="stylesheet" href="style.css" />
-    <!-- Clash Display from Fontshare -->
-    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
-
-    <!-- Be Vietnam Pro from Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
-    <meta property="og:title" content="ARIT General Construction — Washington DC">
+    <!-- Fonts -->
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <!-- OG -->
+    <meta property="og:title" content="ARIT General Construction — Washington DC" />
     <meta property="og:description"
-        content="Tuck pointing, exterior paint, home improvement, repairs, minor plumbing, carpentry, and flat roofing in Washington DC.">
-    <meta property="og:url" content="https://www.aritconstruction.com/">
-    <meta property="og:type" content="website">
+        content="Tuck pointing, exterior paint, home improvement, repairs, minor plumbing, carpentry, and flat roofing in Washington DC." />
+    <meta property="og:url" content="https://www.aritconstruction.com/" />
+    <meta property="og:type" content="website" />
 
+    <!-- Schema -->
     <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "@id": "https://www.aritconstruction.com/#business",
-  "name": "ARIT General Construction",
-  "url": "https://www.aritconstruction.com/",
-  "telephone": "+12022889129",
-  "email": "aritonidc@gmail.com",
-  "image": "https://www.aritconstruction.com/assets/brand/logo.png",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "1627 R St NW, Suite 401",
-    "addressLocality": "Washington",
-    "addressRegion": "DC",
-    "postalCode": "20009",
-    "addressCountry": "US"
-  },
-  "areaServed": ["Washington DC", "NW Washington DC", "Arlington VA", "Bethesda MD"],
-  "geo": {
-    "@type": "GeoCoordinates",
-    "latitude": 38.9125,
-    "longitude": -77.0380
-  },
-  "makesOffer": [
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Tuck pointing (filling brick joints with formula mortar)"}},
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Exterior paint"}},
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Home improvement"}},
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Repairs"}},
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Minor plumbing"}},
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Projects"}},
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Carpentry"}},
-    {"@type":"Offer","itemOffered":{"@type":"Service","name":"Roofing and roof repairs — flat roofs"}}
-  ]
-}
-</script>
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://www.aritconstruction.com/#business",
+    "name": "ARIT General Construction",
+    "url": "https://www.aritconstruction.com/",
+    "telephone": "+12022889129",
+    "email": "aritonidc@gmail.com",
+    "image": "https://www.aritconstruction.com/assets/brand/logo.png",
+    "address": {"@type": "PostalAddress","streetAddress": "1627 R St NW, Suite 401","addressLocality": "Washington","addressRegion": "DC","postalCode": "20009","addressCountry": "US"},
+    "areaServed": ["Washington DC","NW Washington DC","Arlington VA","Bethesda MD"],
+    "geo": {"@type": "GeoCoordinates","latitude": 38.9125,"longitude": -77.0380},
+    "makesOffer": [
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Tuck pointing (filling brick joints with formula mortar)"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Exterior paint"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Home improvement"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Repairs"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Minor plumbing"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Projects"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Carpentry"}},
+      {"@type":"Offer","itemOffered":{"@type":"Service","name":"Roofing and roof repairs — flat roofs"}}
+    ]
+  }
+  </script>
+
+    <!-- Paint Roller: styles -->
+    <style>
+        :root {
+            --paint-bg: #ffffff;
+            /* full-screen veil color */
+            --paint-duration-ms: 2800;
+            /* travel time */
+            --paint-reveal-lag: 0.14;
+            /* content appears after roller */
+            --paint-blur: 0px;
+            /* set to 8px for blurred reveal */
+        }
+
+        /* Overlay container */
+        .paint-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            contain: layout paint style;
+        }
+
+        .paint-overlay[hidden] {
+            display: none !important;
+        }
+
+        /* Veil covers everything at start; we progressively clip the TOP away */
+        .paint-veil {
+            position: absolute;
+            inset: 0;
+            background: var(--paint-bg);
+            backdrop-filter: blur(var(--paint-blur));
+            -webkit-backdrop-filter: blur(var(--paint-blur));
+            clip-path: inset(var(--revealH, 0px) 0 0 0);
+        }
+
+        /* Roller SVG */
+        .paint-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .rollers-container {
+            display: flex;
+            gap: 20px;
+            /* adjust as needed */
+        }
+
+        .roller {
+            width: 48%;
+        }
 
 
+
+
+        /* Fade out after complete */
+        .paint-overlay.fade-out {
+            animation: paintFade .35s ease forwards;
+        }
+
+        @keyframes paintFade {
+            to {
+                opacity: 0;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            :root {
+                --paint-duration-ms: 600;
+            }
+        }
+    </style>
 </head>
 
 <body class="home-page">
-
     <!-- Navbar -->
     <header>
         <nav class="navbar">
             <h1 class="logo">ARIT Construction</h1>
-
-            <button class="hamburger" id="hamburger" aria-label="Toggle navigation">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-
+            <button class="hamburger" id="hamburger" aria-label="Toggle navigation"><span class="bar"></span><span
+                    class="bar"></span><span class="bar"></span></button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
@@ -86,7 +144,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h2>Building Trust. Delivering Excellence.</h2>
+            <h2>BUILDING TRUST.<br>DELIVERING EXCELLENCE.</h2>
             <p>ARIT General Construction — Washington DC's trusted partner for quality residential & commercial
                 projects.</p>
             <a href="contact.html" class="btn">Request a Quote</a>
@@ -98,8 +156,7 @@
         <div class="content">
             <h2>Who We Are</h2>
             <p>With over two decades of experience, ARIT delivers construction solutions that combine craftsmanship,
-                compliance, and client care. We are proud to serve metropolitan Washington DC.
-            </p>
+                compliance, and client care. We are proud to serve metropolitan Washington DC.</p>
             <a href="about.html" class="btn-secondary">Learn More</a>
         </div>
     </section>
@@ -108,38 +165,33 @@
     <section class="section services-preview">
         <h2>Our Services</h2>
         <div class="services-grid">
-            <div class="service-card-img" style="background-image: url('assets/home/service1.png');">
+            <div class="service-card-img" style="background-image:url('assets/home/service1.png');">
                 <div class="service-overlay">
                     <h3>Residential Construction</h3>
                     <p>From custom homes to renovations, we build with quality, integrity and excellence.</p>
                 </div>
             </div>
-            <div class="service-card-img" style="background-image: url('assets/home/service2.png');">
+            <div class="service-card-img" style="background-image:url('assets/home/service2.png');">
                 <div class="service-overlay">
                     <h3>Tenant Improvements</h3>
                     <p>Helping management companies and realtors achieve their goals and keep their promises.</p>
                 </div>
             </div>
-            <div class="service-card-img" style="background-image: url('assets/home/service3.png');">
+            <div class="service-card-img" style="background-image:url('assets/home/service3.png');">
                 <div class="service-overlay">
                     <h3>Remodeling & Additions</h3>
                     <p>Kitchen, bath, basement, and whole-home transformations.</p>
                 </div>
             </div>
         </div>
-        <br>
-        <a href="services.html" class="btn-secondary">View All Services</a>
+        <br><a href="services.html" class="btn-secondary">View All Services</a>
     </section>
 
-
-
-
-    <!-- Testimonials Section -->
+    <!-- Testimonials -->
     <section class="section with-icons">
         <h2 class="section-title">Some of Our Trustworthy Referrals</h2>
         <p class="section-subtitle">We’re proud to be trusted by homeowners and management companies throughout the DC
             metro area.</p>
-
         <div class="services-grid">
             <div class="service-card">
                 <p>“ARIT exceeded our expectations on a sensitive embassy renovation. Their professionalism and
@@ -149,7 +201,7 @@
             <div class="service-card">
                 <p>“Ariton is smart and he is a committed problem solver. He does what he says he is going to do when he
                     says he is going to do it and for the agreed upon amount. My house is in excellent condition and I
-                    owe it all to him.”</p>
+                    owe it all to him.”</p>
                 <h3>- Private Homeowner, NW Washington DC</h3>
             </div>
             <div class="service-card">
@@ -160,12 +212,10 @@
         </div>
     </section>
 
-
-    <!-- Reviews Carousel Section -->
+    <!-- Reviews -->
     <section class="section reviews-carousel">
         <h2 class="section-title">Client Reviews 🛠️</h2>
         <p class="section-subtitle">Here’s what our clients say about working with us.</p>
-
         <div class="carousel-container">
             <div class="carousel-track" id="carouselTrack">
                 <div class="review-card">
@@ -188,57 +238,227 @@
         </div>
     </section>
 
-    <!-- CTA Banner -->
+    <!-- CTA -->
     <section class="cta-banner">
         <h2>Let’s Build Something Exceptional Together</h2>
         <a href="contact.html" class="btn">Get in Touch</a>
     </section>
 
-
     <!-- Footer -->
     <footer class="footer-enhanced">
         <div class="footer-container">
-            <!-- Left: Contact Info -->
             <div class="footer-contact">
                 <h3>Contact Information</h3>
                 <ul class="contact-list">
-                    <li>
-                        <span class="icon">📍</span>
-                        1627 R St NW, Suite 401<br>Washington, DC 20009
-                    </li>
-                    <li>
-                        <span class="icon">☎️</span>
-                        <a href="tel:+12022889129">+1 (202) 288‑9129</a>
-                    </li>
-                    <li>
-                        <span class="icon">✉️</span>
-                        <a href="mailto:info@aritconstruction.com">aritonidc@gmail.com</a>
+                    <li><span class="icon">📍</span> 1627 R St NW, Suite 401<br>Washington, DC 20009</li>
+                    <li><span class="icon">☎️</span> <a href="tel:+12022889129">+1 (202) 288-9129</a></li>
+                    <li><span class="icon">✉️</span> <a href="mailto:info@aritconstruction.com">aritonidc@gmail.com</a>
                     </li>
                 </ul>
             </div>
-
-            <!-- Right: Map -->
             <div class="footer-map-section">
                 <h3>Our Location</h3>
                 <div class="map-container">
-                    <!-- Invisible, full-area link -->
                     <a class="map-link-overlay" href="https://maps.google.com/?q=1627+R+St+NW,+Washington,+DC+20009"
                         target="_blank" rel="noopener"
                         aria-label="Open 1627 R St NW, Washington, DC 20009 in Google Maps">Open in Google Maps</a>
-
-                    <!-- Embedded map (Satellite view) -->
                     <iframe src="https://www.google.com/maps?q=1627+R+St+NW,+Washington,+DC+20009&t=k&z=18&output=embed"
-                        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                        allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
         </div>
-        <div class="footer-bottom">
-            &copy; 2025 ARIT General Construction LLC
-        </div>
+        <div class="footer-bottom">&copy; 2025 ARIT General Construction LLC</div>
     </footer>
 
+
+
     <script src="script.js"></script>
+
+    <!-- ===== Two-roller Paint Intro (non-blocking) ===== -->
+    <div class="paint-overlay" id="paintOverlay" aria-hidden="true">
+        <!-- White/blur veil that opens AFTER the rollers pass -->
+        <div class="paint-veil" id="paintVeil"></div>
+
+        <!-- SVG rollers (JS populates 1 on phones, 2 otherwise) -->
+        <svg class="paint-svg" id="paintSvg" xmlns="http://www.w3.org/2000/svg" role="presentation">
+            <g id="rollers"></g>
+        </svg>
+    </div>
+
+    <script>
+        (function () {
+            const veil = document.getElementById('paintVeil');
+            const overlay = document.getElementById('paintOverlay');
+            const svg = document.getElementById('paintSvg');
+            const rollersG = document.getElementById('rollers');
+
+            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            function cssNum(name, fallback) {
+                const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                const n = Number(v);
+                return Number.isFinite(n) ? n : fallback;
+            }
+            const BASE_DURATION = cssNum('--paint-duration-ms', 2800);
+            const DURATION_MS = prefersReduced ? 600 : BASE_DURATION;
+            const LAG = Math.max(0, Math.min(0.45, parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--paint-reveal-lag')) || 0.14));
+            const EASE = t => (t < .5) ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+            function createRoller() {
+                const ns = 'http://www.w3.org/2000/svg';
+                const g = document.createElementNS(ns, 'g'); g.setAttribute('class', 'roller');
+
+                const head = document.createElementNS(ns, 'rect');
+                head.setAttribute('rx', '14'); head.setAttribute('ry', '14');
+                head.setAttribute('fill', '#dcdfe3'); head.setAttribute('stroke', '#aeb5bb'); head.setAttribute('stroke-width', '1');
+
+                const arm = document.createElementNS(ns, 'path');
+                arm.setAttribute('fill', 'none'); arm.setAttribute('stroke', '#8a8f94'); arm.setAttribute('stroke-width', '7'); arm.setAttribute('stroke-linecap', 'round');
+
+                const hOuter = document.createElementNS(ns, 'rect');
+                hOuter.setAttribute('rx', '8'); hOuter.setAttribute('ry', '8'); hOuter.setAttribute('fill', '#2d2f33');
+
+                const hInner = document.createElementNS(ns, 'rect');
+                hInner.setAttribute('rx', '6'); hInner.setAttribute('ry', '6'); hInner.setAttribute('fill', '#404349');
+
+                g.appendChild(head); g.appendChild(arm); g.appendChild(hOuter); g.appendChild(hInner);
+                rollersG.appendChild(g);
+
+                g.style.filter = 'drop-shadow(0 3px 6px rgba(0,0,0,.18))';
+                g.style.willChange = 'transform';
+                return { g, head, arm, hOuter, hInner };
+            }
+
+            // EXACTLY: 1 roller on phones (<640px), 2 rollers otherwise
+            function decideCount(vw) { return vw < 786 ? 1 : 2; }
+
+            let rollerModels = [];
+            let rollerCount = 0;
+
+            function build() {
+                const vw = Math.ceil(window.innerWidth);
+                const vh = Math.ceil(window.innerHeight);
+                svg.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
+
+                const need = decideCount(vw);
+                if (need !== rollerCount) {
+                    while (rollersG.firstChild) rollersG.removeChild(rollersG.firstChild);
+                    rollerModels = Array.from({ length: need }, () => createRoller());
+                    rollerCount = need;
+                }
+
+                // Split the viewport into equal columns (1 or 2) with a real gap
+                const segW = vw / rollerCount;
+                const segGap = Math.max(16, Math.round(vw * 0.015)); // visible gutter between columns
+
+                // Roller thickness: chunkier for single; slightly slimmer for doubles
+                const headH = Math.max(60, Math.min(110, Math.round(vw * (rollerCount === 1 ? 0.08 : 0.055))));
+
+                rollerModels.forEach((m, i) => {
+                    const segX = Math.round(i * segW);
+                    const headX = segX + segGap;
+
+                    // Arm/handle sizes
+                    let armLen = Math.max(50, Math.min(110, Math.round(vw * 0.05)));
+                    const handleW = Math.max(22, Math.min(34, Math.round(vw * 0.022)));
+                    const handleH = Math.max(90, Math.min(140, Math.round(vw * 0.11)));
+                    const handleTop = headH + 26;
+
+                    // Leave space for arm+handle **inside** this segment + a safety gap so shadows never touch
+                    const safety = Math.max(8, Math.round(vw * 0.005));
+                    let headW = Math.round(segW - segGap * 2 - armLen - handleW - safety);
+
+                    // Guarantee a minimum head width; if too small, shorten the arm a bit first
+                    const minHead = 180;
+                    if (headW < minHead) {
+                        const deficit = minHead - headW;
+                        const armMin = 40;
+                        const reducible = Math.max(0, armLen - armMin);
+                        const reduceBy = Math.min(deficit, reducible);
+                        armLen += -reduceBy;
+                        headW += reduceBy;
+                        // still short? shrink handle width slightly (rare on very narrow widths)
+                        if (headW < minHead && handleW > 18) {
+                            const extra = Math.min(minHead - headW, handleW - 18);
+                            headW += extra;
+                        }
+                    }
+
+                    const r = Math.min(18, Math.round(headH / 3));
+                    m.head.setAttribute('x', headX);
+                    m.head.setAttribute('y', 0);
+                    m.head.setAttribute('width', headW);
+                    m.head.setAttribute('height', headH);
+                    m.head.setAttribute('rx', r); m.head.setAttribute('ry', r);
+
+                    const rightX = headX + headW;
+                    const armY = headH / 2;
+
+                    // Arm stays fully inside this segment
+                    m.arm.setAttribute(
+                        'd',
+                        `M ${rightX - 12} ${armY} C ${rightX + 16} ${armY}, ${rightX + 36} ${armY}, ${rightX + armLen} ${armY} L ${rightX + armLen} ${handleTop}`
+                    );
+
+                    m.hOuter.setAttribute('x', rightX + armLen - Math.round(handleW / 2));
+                    m.hOuter.setAttribute('y', handleTop);
+                    m.hOuter.setAttribute('width', handleW);
+                    m.hOuter.setAttribute('height', handleH);
+
+                    m.hInner.setAttribute('x', rightX + armLen - Math.round((handleW - 8) / 2));
+                    m.hInner.setAttribute('y', handleTop + 4);
+                    m.hInner.setAttribute('width', handleW - 8);
+                    m.hInner.setAttribute('height', handleH - 8);
+
+                    // Start above viewport
+                    m.g.setAttribute('transform', `translate(0, ${-headH - 24})`);
+                });
+
+                // fully covered at start
+                veil.style.setProperty('--revealH', '0px');
+            }
+
+
+            function animate() {
+                const vh = window.innerHeight;
+                const headH = Number(rollerModels[0]?.head.getAttribute('height')) || 70;
+                const start = performance.now();
+
+                function step(now) {
+                    let t = Math.min(1, (now - start) / DURATION_MS);
+                    const eased = EASE(t);
+
+                    const overTravel = Math.max(24, headH);
+                    const y = -headH - 24 + eased * (vh + overTravel);
+                    rollerModels.forEach(m => m.g.setAttribute('transform', `translate(0, ${y})`));
+
+                    const revealP = Math.max(0, Math.min(1, eased - LAG));
+                    veil.style.setProperty('--revealH', (revealP * vh) + 'px');
+
+                    if (t < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        veil.style.setProperty('--revealH', vh + 'px');
+                        overlay.classList.add('fade-out');
+                        overlay.addEventListener('animationend', () => overlay.setAttribute('hidden', ''), { once: true });
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            function init() {
+                build();
+                // To skip entirely for reduced motion users, uncomment:
+                // if (prefersReduced){ veil.style.setProperty('--revealH', window.innerHeight + 'px'); overlay.setAttribute('hidden',''); return; }
+                animate();
+            }
+
+            let resizeRaf;
+            window.addEventListener('resize', () => { cancelAnimationFrame(resizeRaf); resizeRaf = requestAnimationFrame(build); });
+            if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init, { once: true }); }
+            else { init(); }
+        })();
+    </script>
+    <!-- ===== /Two-roller Paint Intro ===== -->
 
 </body>
 
