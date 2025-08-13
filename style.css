@@ -828,3 +828,95 @@ button[type="submit"]:hover {
   border: none;
   outline: none;
 }
+
+
+
+/* === Paint-Reveal Intro (global) === */
+:root {
+  /* Timing & feel */
+  --paint-duration-ms: 2200;
+  --paint-reveal-lag: .10;
+
+  /* No column tint */
+  --paint-color: transparent;
+  --paint-wet-alpha: 0;
+  --paint-edge-h: 18px;
+
+  /* Start “wall” color while rolling */
+  --paint-blur: 6px;
+  /* fabric colors (soft, easy on eyes) */
+  --roller-dark: #cdd4da;
+  /* cool grey-blue */
+  --roller-light: #e6eaee;
+  /* pale grey-blue */
+}
+
+/* Root overlay that hosts the columns + canvas */
+.paint-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  contain: layout paint style;
+  background: transparent;
+  /* columns do the covering */
+  opacity: 1;
+}
+
+.paint-overlay[hidden] {
+  display: none !important;
+}
+
+.paint-overlay.fade-out {
+  animation: po-fade .35s ease forwards;
+}
+
+@keyframes po-fade {
+  to {
+    opacity: 0
+  }
+}
+
+/* Canvas draws the rollers */
+#rollerCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* One “cover” column per roller.
+   We cut a transparent hole from TOP down to --revealY. */
+.cover-clip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(transparent 0 var(--revealY, 0px), #000 var(--revealY, 0px) 100%) no-repeat;
+  mask: linear-gradient(transparent 0 var(--revealY, 0px), #000 var(--revealY, 0px) 100%) no-repeat;
+}
+
+.cover-pane {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  /* “wall” white before reveal */
+  backdrop-filter: blur(var(--paint-blur));
+  -webkit-backdrop-filter: blur(var(--paint-blur));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --paint-duration-ms: 700;
+    --paint-blur: 0px;
+  }
+}
+
+@media (max-width:640px) {
+  :root {
+    --paint-blur: 0px;
+  }
+}
