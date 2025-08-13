@@ -9,10 +9,12 @@
     <title>ARIT General Construction | Tuck Pointing, Exterior Paint, Carpentry & Flat Roofing in Washington DC</title>
     <link rel="canonical" href="https://www.aritconstruction.com/" />
     <link rel="stylesheet" href="style.css" />
+
     <!-- Fonts -->
     <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&display=swap"
         rel="stylesheet" />
+
     <!-- OG -->
     <meta property="og:title" content="ARIT General Construction — Washington DC" />
     <meta property="og:description"
@@ -47,81 +49,103 @@
   }
   </script>
 
-    <!-- Paint Roller: styles -->
     <style>
         :root {
-            --paint-bg: #ffffff;
-            /* full-screen veil color */
-            --paint-duration-ms: 2800;
-            /* travel time */
-            --paint-reveal-lag: 0.14;
-            /* content appears after roller */
-            --paint-blur: 0px;
-            /* set to 8px for blurred reveal */
+            /* Timing & feel */
+            --paint-duration-ms: 2200;
+            --paint-reveal-lag: .10;
+
+            /* Veil — make it OPAQUE so nothing is visible before reveal */
+            --paint-cover: #0b0f19;
+            /* solid dark (matches your theme) */
+            --paint-blur: 6px;
+            /* mild blur; keep low for perf */
+
+            /* No column tint */
+            --paint-color: transparent;
+            --paint-wet-alpha: 0;
+            --paint-edge-h: 18px;
+
+            /* Roller fabric color — tune to your site */
+            --roller-fabric-color: #d9e1ea;
+            /* cool light gray-blue */
         }
 
-        /* Overlay container */
         .paint-overlay {
             position: fixed;
             inset: 0;
             z-index: 9999;
             pointer-events: none;
             contain: layout paint style;
+
+            /* IMPORTANT: do NOT cover the page here */
+            background: transparent;
+            /* ← was var(--paint-cover) */
+            opacity: 1;
         }
+
 
         .paint-overlay[hidden] {
             display: none !important;
         }
 
-        /* Veil covers everything at start; we progressively clip the TOP away */
-        .paint-veil {
-            position: absolute;
-            inset: 0;
-            background: var(--paint-bg);
-            backdrop-filter: blur(var(--paint-blur));
-            -webkit-backdrop-filter: blur(var(--paint-blur));
-            clip-path: inset(var(--revealH, 0px) 0 0 0);
+        .paint-overlay.fade-out {
+            animation: po-fade .35s ease forwards;
         }
 
-        /* Roller SVG */
-        .paint-svg {
-            position: absolute;
+        @keyframes po-fade {
+            to {
+                opacity: 0
+            }
+        }
+
+        /* Canvas draws rollers */
+        #rollerCanvas {
+            position: fixed;
             inset: 0;
             width: 100%;
             height: 100%;
             display: block;
+            pointer-events: none;
         }
 
-        .rollers-container {
-            display: flex;
-            gap: 20px;
-            /* adjust as needed */
+        /* One cover column per roller; we cut a hole from the TOP down to --revealY */
+        .cover-clip {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            pointer-events: none;
+            left: 0;
         }
 
-        .roller {
-            width: 48%;
+        .cover-clip {
+            -webkit-mask: linear-gradient(transparent 0 var(--revealY, 0px), #000 var(--revealY, 0px) 100%) no-repeat;
+            mask: linear-gradient(transparent 0 var(--revealY, 0px), #000 var(--revealY, 0px) 100%) no-repeat;
         }
 
-
-
-
-        /* Fade out after complete */
-        .paint-overlay.fade-out {
-            animation: paintFade .35s ease forwards;
-        }
-
-        @keyframes paintFade {
-            to {
-                opacity: 0;
-            }
+        .cover-pane {
+            position: absolute;
+            inset: 0;
+            /* keep the still-covered area fully opaque + slightly soft */
+            background: var(--paint-cover);
+            backdrop-filter: blur(var(--paint-blur));
+            -webkit-backdrop-filter: blur(var(--paint-blur));
         }
 
         @media (prefers-reduced-motion: reduce) {
             :root {
-                --paint-duration-ms: 600;
+                --paint-duration-ms: 700;
+                --paint-blur: 0px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            :root {
+                --paint-blur: 0px;
             }
         }
     </style>
+
 </head>
 
 <body class="home-page">
@@ -270,195 +294,228 @@
         <div class="footer-bottom">&copy; 2025 ARIT General Construction LLC</div>
     </footer>
 
-
-
     <script src="script.js"></script>
 
-    <!-- ===== Two-roller Paint Intro (non-blocking) ===== -->
+    <!-- ===== Paint-Reveal Intro (rollers that actually REVEAL) ===== -->
     <div class="paint-overlay" id="paintOverlay" aria-hidden="true">
-        <!-- White/blur veil that opens AFTER the rollers pass -->
-        <div class="paint-veil" id="paintVeil"></div>
-
-        <!-- SVG rollers (JS populates 1 on phones, 2 otherwise) -->
-        <svg class="paint-svg" id="paintSvg" xmlns="http://www.w3.org/2000/svg" role="presentation">
-            <g id="rollers"></g>
-        </svg>
+        <div id="veilHost"></div> <!-- host for per-roller columns -->
+        <canvas id="rollerCanvas"></canvas> <!-- rollers + hardware -->
     </div>
 
     <script>
         (function () {
-            const veil = document.getElementById('paintVeil');
             const overlay = document.getElementById('paintOverlay');
-            const svg = document.getElementById('paintSvg');
-            const rollersG = document.getElementById('rollers');
+            const veilHost = document.getElementById('veilHost');
+            const canvas = document.getElementById('rollerCanvas');
+            const ctx = canvas.getContext('2d');
 
-            const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-            function cssNum(name, fallback) {
-                const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-                const n = Number(v);
-                return Number.isFinite(n) ? n : fallback;
-            }
-            const BASE_DURATION = cssNum('--paint-duration-ms', 2800);
-            const DURATION_MS = prefersReduced ? 600 : BASE_DURATION;
-            const LAG = Math.max(0, Math.min(0.45, parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--paint-reveal-lag')) || 0.14));
+            const css = getComputedStyle(document.documentElement);
+            const prefersReduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const BASE = Number(css.getPropertyValue('--paint-duration-ms')) || 2200;
+            const DURATION_MS = prefersReduced ? 700 : BASE;
+            const LAG = Math.max(0, Math.min(.45, parseFloat(css.getPropertyValue('--paint-reveal-lag')) || .10));
             const EASE = t => (t < .5) ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 
-            function createRoller() {
-                const ns = 'http://www.w3.org/2000/svg';
-                const g = document.createElementNS(ns, 'g'); g.setAttribute('class', 'roller');
+            const ROLLER_COLOR = (css.getPropertyValue('--roller-fabric-color') || '#d7dde4').trim();
 
-                const head = document.createElementNS(ns, 'rect');
-                head.setAttribute('rx', '14'); head.setAttribute('ry', '14');
-                head.setAttribute('fill', '#dcdfe3'); head.setAttribute('stroke', '#aeb5bb'); head.setAttribute('stroke-width', '1');
+            const COL = {
+                headBase: ROLLER_COLOR,      // base fabric = your theme color
+                headEdge: '#b7c0c9',
+                arm: '#8e99a6', handle: '#1f2530', handleIn: '#2b333f',
+                accent: '#ffc72c', shadow: 'rgba(0,0,0,.18)',
+                paint: (css.getPropertyValue('--paint-color') || 'transparent').trim()
+            };
 
-                const arm = document.createElementNS(ns, 'path');
-                arm.setAttribute('fill', 'none'); arm.setAttribute('stroke', '#8a8f94'); arm.setAttribute('stroke-width', '7'); arm.setAttribute('stroke-linecap', 'round');
+            let W = 0, H = 0, dpr = 1;
+            let rollers = [];
+            let start = 0, running = false;
 
-                const hOuter = document.createElementNS(ns, 'rect');
-                hOuter.setAttribute('rx', '8'); hOuter.setAttribute('ry', '8'); hOuter.setAttribute('fill', '#2d2f33');
-
-                const hInner = document.createElementNS(ns, 'rect');
-                hInner.setAttribute('rx', '6'); hInner.setAttribute('ry', '6'); hInner.setAttribute('fill', '#404349');
-
-                g.appendChild(head); g.appendChild(arm); g.appendChild(hOuter); g.appendChild(hInner);
-                rollersG.appendChild(g);
-
-                g.style.filter = 'drop-shadow(0 3px 6px rgba(0,0,0,.18))';
-                g.style.willChange = 'transform';
-                return { g, head, arm, hOuter, hInner };
-            }
-
-            // EXACTLY: 1 roller on phones (<640px), 2 rollers otherwise
             function decideCount(vw) { return vw < 786 ? 1 : 2; }
 
-            let rollerModels = [];
-            let rollerCount = 0;
+            function setCanvasSize() {
+                const r = canvas.getBoundingClientRect();
+                dpr = Math.max(1, Math.min(2, devicePixelRatio || 1));
+                W = Math.round(r.width); H = Math.round(r.height);
+                canvas.width = Math.round(W * dpr);
+                canvas.height = Math.round(H * dpr);
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+
+            function roundedRect(c, x, y, w, h, r) {
+                const rr = Math.min(r, h / 2, w / 2);
+                c.beginPath();
+                c.moveTo(x + rr, y);
+                c.arcTo(x + w, y, x + w, y + h, rr);
+                c.arcTo(x + w, y + h, x, y + h, rr);
+                c.arcTo(x, y + h, x, y, rr);
+                c.arcTo(x, y, x + w, y, rr);
+                c.closePath();
+            }
+
+            // Low-contrast “spin” texture tinted to headBase
+            function headPattern(headH, offset, base) {
+                const stripeW = Math.max(6, Math.round(headH * 0.18));
+                const patW = stripeW * 2, patH = Math.max(6, Math.round(headH * 0.6));
+                const cv = document.createElement('canvas'); cv.width = patW; cv.height = patH;
+                const c2 = cv.getContext('2d');
+                // Base fabric color
+                c2.fillStyle = base; c2.fillRect(0, 0, patW, patH);
+                // Subtle darker stripe
+                c2.globalAlpha = 0.10; c2.fillStyle = '#000'; c2.fillRect((offset % patW), 0, stripeW, patH);
+                // Subtle lighter stripe
+                c2.globalAlpha = 0.12; c2.fillStyle = '#fff'; c2.fillRect(((offset + Math.round(stripeW * .6)) % patW), 0, Math.round(stripeW * .35), patH);
+                c2.globalAlpha = 1.0;
+                return ctx.createPattern(cv, 'repeat');
+            }
 
             function build() {
-                const vw = Math.ceil(window.innerWidth);
-                const vh = Math.ceil(window.innerHeight);
-                svg.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
+                setCanvasSize();
+                const count = decideCount(W);
+                veilHost.innerHTML = ''; rollers.length = 0;
 
-                const need = decideCount(vw);
-                if (need !== rollerCount) {
-                    while (rollersG.firstChild) rollersG.removeChild(rollersG.firstChild);
-                    rollerModels = Array.from({ length: need }, () => createRoller());
-                    rollerCount = need;
-                }
+                const segW = W / count;
+                const segGap = Math.max(16, Math.round(W * 0.015));
+                const headH = Math.max(60, Math.min(110, Math.round(W * (count === 1 ? 0.08 : 0.055))));
 
-                // Split the viewport into equal columns (1 or 2) with a real gap
-                const segW = vw / rollerCount;
-                const segGap = Math.max(16, Math.round(vw * 0.015)); // visible gutter between columns
-
-                // Roller thickness: chunkier for single; slightly slimmer for doubles
-                const headH = Math.max(60, Math.min(110, Math.round(vw * (rollerCount === 1 ? 0.08 : 0.055))));
-
-                rollerModels.forEach((m, i) => {
+                for (let i = 0; i < count; i++) {
                     const segX = Math.round(i * segW);
                     const headX = segX + segGap;
 
-                    // Arm/handle sizes
-                    let armLen = Math.max(50, Math.min(110, Math.round(vw * 0.05)));
-                    const handleW = Math.max(22, Math.min(34, Math.round(vw * 0.022)));
-                    const handleH = Math.max(90, Math.min(140, Math.round(vw * 0.11)));
-                    const handleTop = headH + 26;
-
-                    // Leave space for arm+handle **inside** this segment + a safety gap so shadows never touch
-                    const safety = Math.max(8, Math.round(vw * 0.005));
+                    let armLen = Math.max(50, Math.min(110, Math.round(W * 0.05)));
+                    let handleW = Math.max(22, Math.min(34, Math.round(W * 0.022)));
+                    const handleH = Math.max(90, Math.min(140, Math.round(W * 0.11)));
+                    const safety = Math.max(8, Math.round(W * 0.005));
                     let headW = Math.round(segW - segGap * 2 - armLen - handleW - safety);
-
-                    // Guarantee a minimum head width; if too small, shorten the arm a bit first
                     const minHead = 180;
                     if (headW < minHead) {
-                        const deficit = minHead - headW;
-                        const armMin = 40;
-                        const reducible = Math.max(0, armLen - armMin);
+                        const deficit = minHead - headW, armMin = 40, reducible = Math.max(0, armLen - armMin);
                         const reduceBy = Math.min(deficit, reducible);
-                        armLen += -reduceBy;
-                        headW += reduceBy;
-                        // still short? shrink handle width slightly (rare on very narrow widths)
+                        armLen -= reduceBy; headW += reduceBy;
                         if (headW < minHead && handleW > 18) {
                             const extra = Math.min(minHead - headW, handleW - 18);
-                            headW += extra;
+                            handleW -= extra; headW += extra;
                         }
                     }
 
-                    const r = Math.min(18, Math.round(headH / 3));
-                    m.head.setAttribute('x', headX);
-                    m.head.setAttribute('y', 0);
-                    m.head.setAttribute('width', headW);
-                    m.head.setAttribute('height', headH);
-                    m.head.setAttribute('rx', r); m.head.setAttribute('ry', r);
+                    // COVER column (opaque until revealed)
+                    const clip = document.createElement('div');
+                    clip.className = 'cover-clip';
+                    clip.style.left = segX + 'px';
+                    clip.style.width = segW + 'px';
+                    clip.style.setProperty('--revealY', '0px');
 
-                    const rightX = headX + headW;
-                    const armY = headH / 2;
+                    const pane = document.createElement('div');
+                    pane.className = 'cover-pane';
+                    clip.appendChild(pane);
+                    veilHost.appendChild(clip);
 
-                    // Arm stays fully inside this segment
-                    m.arm.setAttribute(
-                        'd',
-                        `M ${rightX - 12} ${armY} C ${rightX + 16} ${armY}, ${rightX + 36} ${armY}, ${rightX + armLen} ${armY} L ${rightX + armLen} ${handleTop}`
-                    );
-
-                    m.hOuter.setAttribute('x', rightX + armLen - Math.round(handleW / 2));
-                    m.hOuter.setAttribute('y', handleTop);
-                    m.hOuter.setAttribute('width', handleW);
-                    m.hOuter.setAttribute('height', handleH);
-
-                    m.hInner.setAttribute('x', rightX + armLen - Math.round((handleW - 8) / 2));
-                    m.hInner.setAttribute('y', handleTop + 4);
-                    m.hInner.setAttribute('width', handleW - 8);
-                    m.hInner.setAttribute('height', handleH - 8);
-
-                    // Start above viewport
-                    m.g.setAttribute('transform', `translate(0, ${-headH - 24})`);
-                });
-
-                // fully covered at start
-                veil.style.setProperty('--revealH', '0px');
+                    rollers.push({
+                        segX, segW,
+                        headX, headY: 0, headW, headH, headR: Math.min(18, Math.round(headH / 3)),
+                        armLen, handleW, handleH,
+                        y: -headH - 24,
+                        pane, clip,
+                        raggedSeed: Math.random() * 1000,
+                    });
+                }
             }
 
+            function drawRoller(r, spinOffset) {
+                const { headX, headY, headW, headH, headR, armLen, handleW, handleH, y } = r;
+                const rightX = headX + headW;
+                const armY = headY + headH / 2;
+                const handleTop = headY + headH + 26;
+
+                ctx.save();
+                ctx.translate(0, y);
+
+                // head (base tinted to your theme)
+                roundedRect(ctx, headX, headY, headW, headH, headR);
+                ctx.fillStyle = COL.headBase; ctx.fill();
+                ctx.strokeStyle = '#b7c0c9'; ctx.lineWidth = 1; ctx.stroke();
+
+                // spin texture
+                ctx.save();
+                roundedRect(ctx, headX, headY, headW, headH, headR); ctx.clip();
+                ctx.fillStyle = headPattern(headH, spinOffset, COL.headBase);
+                ctx.fillRect(headX, headY, headW, headH);
+                ctx.restore();
+
+                // arm
+                ctx.lineCap = 'round'; ctx.strokeStyle = COL.arm; ctx.lineWidth = 7;
+                ctx.beginPath();
+                ctx.moveTo(rightX - 12, armY);
+                ctx.bezierCurveTo(rightX + 16, armY, rightX + 36, armY, rightX + armLen, armY);
+                ctx.lineTo(rightX + armLen, handleTop);
+                ctx.stroke();
+
+                // joint accent
+                ctx.fillStyle = COL.accent; ctx.beginPath(); ctx.arc(rightX - 8, armY, 2.6, 0, Math.PI * 2); ctx.fill();
+
+                // handle
+                const hx = rightX + armLen - Math.round(handleW / 2);
+                const hy = handleTop;
+                ctx.fillStyle = COL.handle; roundedRect(ctx, hx, hy, handleW, handleH, 8); ctx.fill();
+                ctx.fillStyle = COL.handleIn; roundedRect(ctx, hx + 4, hy + 4, handleW - 8, handleH - 8, 6); ctx.fill();
+
+                // subtle head shadow
+                ctx.shadowColor = COL.shadow; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
+                ctx.fillStyle = 'transparent'; roundedRect(ctx, headX, headY, headW, headH, headR); ctx.fill();
+
+                ctx.restore();
+            }
 
             function animate() {
-                const vh = window.innerHeight;
-                const headH = Number(rollerModels[0]?.head.getAttribute('height')) || 70;
-                const start = performance.now();
+                running = true; start = performance.now();
 
-                function step(now) {
-                    let t = Math.min(1, (now - start) / DURATION_MS);
+                const loop = now => {
+                    if (!running) return;
+                    const tRaw = (now - start) / DURATION_MS;
+                    const t = Math.min(1, tRaw);
                     const eased = EASE(t);
 
-                    const overTravel = Math.max(24, headH);
-                    const y = -headH - 24 + eased * (vh + overTravel);
-                    rollerModels.forEach(m => m.g.setAttribute('transform', `translate(0, ${y})`));
+                    ctx.clearRect(0, 0, W, H);
 
-                    const revealP = Math.max(0, Math.min(1, eased - LAG));
-                    veil.style.setProperty('--revealH', (revealP * vh) + 'px');
+                    rollers.forEach(r => {
+                        const over = Math.max(24, r.headH);
+                        r.y = -r.headH - 24 + eased * (H + over);
+
+                        // hardware
+                        const circumference = Math.max(60, r.headH * Math.PI);
+                        const spinOffset = (eased * circumference) % (r.headH * 0.36 + 12);
+                        drawRoller(r, spinOffset);
+
+                        // reveal (slightly lagging the head)
+                        const revealY = Math.max(0, Math.min(H, r.y + r.headH * 0.6));
+                        r.clip.style.setProperty('--revealY', revealY + 'px');
+                    });
 
                     if (t < 1) {
-                        requestAnimationFrame(step);
+                        requestAnimationFrame(loop);
                     } else {
-                        veil.style.setProperty('--revealH', vh + 'px');
+                        rollers.forEach(r => r.clip.style.setProperty('--revealY', H + 'px'));
                         overlay.classList.add('fade-out');
                         overlay.addEventListener('animationend', () => overlay.setAttribute('hidden', ''), { once: true });
                     }
-                }
-                requestAnimationFrame(step);
+                };
+
+                requestAnimationFrame(loop);
             }
 
-            function init() {
-                build();
-                // To skip entirely for reduced motion users, uncomment:
-                // if (prefersReduced){ veil.style.setProperty('--revealH', window.innerHeight + 'px'); overlay.setAttribute('hidden',''); return; }
-                animate();
-            }
+            function rebuildAndRestart() { build(); animate(); }
+            function init() { build(); animate(); }
 
+            // Resize
             let resizeRaf;
-            window.addEventListener('resize', () => { cancelAnimationFrame(resizeRaf); resizeRaf = requestAnimationFrame(build); });
-            if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', init, { once: true }); }
-            else { init(); }
+            addEventListener('resize', () => {
+                cancelAnimationFrame(resizeRaf);
+                resizeRaf = requestAnimationFrame(() => { setCanvasSize(); rebuildAndRestart(); });
+            });
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+            else init();
         })();
     </script>
-    <!-- ===== /Two-roller Paint Intro ===== -->
 
 </body>
 
