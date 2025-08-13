@@ -142,8 +142,14 @@
       <div class="footer-map-section">
         <h3>Our Location</h3>
         <div class="map-container">
-          <iframe src="https://www.google.com/maps?q=1627+R+St+NW,+Washington,+DC+20009&output=embed" allowfullscreen=""
-            loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+          <!-- Invisible, full-area link -->
+          <a class="map-link-overlay" href="https://maps.google.com/?q=1627+R+St+NW,+Washington,+DC+20009"
+            target="_blank" rel="noopener" aria-label="Open 1627 R St NW, Washington, DC 20009 in Google Maps">Open in
+            Google Maps</a>
+
+          <!-- Embedded map (Satellite view) -->
+          <iframe src="https://www.google.com/maps?q=1627+R+St+NW,+Washington,+DC+20009&t=k&z=18&output=embed"
+            allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
           </iframe>
         </div>
       </div>
