@@ -12,33 +12,40 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      # If your site is in a subfolder, set SITE_DIR to that folder (e.g., site, public)
+      # Set where your site lives ('.' = repo root)
       - name: Prepare dist
         env:
           SITE_DIR: .
         run: |
+          set -e
           mkdir -p dist
           shopt -s dotglob extglob
           cp -r $SITE_DIR/!(dist|.git|.github) dist/ || true
           touch dist/.nojekyll
 
-      # Keep your custom domain bound to this repo
       - name: Add CNAME
         run: echo "aritconstruction.com" > dist/CNAME
 
-      # Minify safe defaults (optional but recommended)
+      # Quick minify (safe defaults)
       - name: Minify HTML/CSS/JS
         run: |
           npm i -g html-minifier-terser clean-css-cli terser
-          # HTML
           find dist -name "*.html" -type f -exec sh -c \
             'for f; do html-minifier-terser --collapse-whitespace --remove-comments --remove-optional-tags --minify-css true --minify-js true -o "$f" "$f"; done' sh {} +
-          # CSS
           find dist -name "*.css" -type f -exec sh -c \
             'for f; do cleancss -o "$f" "$f"; done' sh {} +
-          # JS
           find dist -name "*.js" -type f -exec sh -c \
             'for f; do terser "$f" -c -m -o "$f"; done' sh {} +
+
+      # === Diagnostics: show what we’re deploying ===
+      - name: Show dist tree
+        run: |
+          echo "----- DIST CONTENTS -----"
+          ls -lah dist || true
+          echo "----- TOP-LEVEL FILES -----"
+          find dist -maxdepth 1 -type f -print
+          echo "----- LARGE FILES (>20MB) -----"
+          find dist -type f -size +20M -exec du -h {} \; || true
 
       # Fail fast if any file exceeds GitHub's 100MB limit
       - name: Guard: no files over 95MB
@@ -50,12 +57,21 @@ jobs:
             exit 1
           fi
 
+      # Ensure we actually have an index.html
+      - name: Guard: index.html exists
+        run: |
+          if [ ! -f dist/index.html ]; then
+            echo "Error: dist/index.html not found. Did the copy step point to the right folder?"
+            exit 1
+          fi
+
       - name: Deploy to public repo
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           repository-name: enionismaili/ARIT-public-repo
           token: ${{ secrets.DEPLOY_TOKEN }}
-          branch: gh-pages
+          branch: gh-pages          # Pages will serve from gh-pages
           folder: dist
           clean: true
           single-commit: true
+          force: true               # helps on first push
