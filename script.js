@@ -36,23 +36,79 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ===== Contact form & phone validation (guarded) =====
+  // ===== Contact form & phone validation (US-wide with real area codes) =====
   const form = document.getElementById("contact-form");
   const phoneInput = document.getElementById("phone");
   const successMessage = document.getElementById("success-message");
 
   if (phoneInput) {
-    const validAreaCodes = "202"; // keep your logic
-    function validatePhone() {
-      const raw = phoneInput.value.replace(/\D/g, "");
-      const areaCode = raw.substring(0, 3);
-      const isValid = validAreaCodes.includes(areaCode) && raw.length === 10;
-      phoneInput.setCustomValidity(isValid ? "" : "Enter an existing phone number of Washington DC");
-      phoneInput.reportValidity();
+    // Lazy-load libphonenumber-js (UMD bundle) once
+    const LIB_URL = "https://unpkg.com/libphonenumber-js@1.11.3/bundle/libphonenumber-max.js";
+
+    function loadLibPhone() {
+      return new Promise((resolve, reject) => {
+        if (window.libphonenumber && typeof window.libphonenumber.parsePhoneNumberFromString === "function") {
+          resolve();
+          return;
+        }
+        // Prevent injecting multiple times
+        if (document.querySelector('script[data-libphonenumber]')) {
+          // Wait until it becomes available
+          const check = () => {
+            if (window.libphonenumber && typeof window.libphonenumber.parsePhoneNumberFromString === "function") resolve();
+            else setTimeout(check, 50);
+          };
+          check();
+          return;
+        }
+        const s = document.createElement("script");
+        s.src = LIB_URL;
+        s.async = true;
+        s.defer = true;
+        s.setAttribute("data-libphonenumber", "true");
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("Failed to load libphonenumber-js"));
+        document.head.appendChild(s);
+      });
     }
+
+    // Strict NANP structural fallback (used only if CDN fails)
+    const NANP_STRICT = /^(?:\+1[\s\-\.]?)?(?:\(?([2-9]\d{2})\)?[\s\-\.]?)?([2-9]\d{2})[\s\-\.]?(\d{4})$/;
+
+    function validatePhone() {
+      const raw = phoneInput.value.trim();
+      if (!raw) {
+        phoneInput.setCustomValidity("");
+        phoneInput.reportValidity();
+        return;
+      }
+
+      // While library loads, do nothing intrusive; finalize validity once ready
+      loadLibPhone()
+        .then(() => {
+          const digits = raw.replace(/\D/g, "");
+          const candidate = digits.length === 10 ? `+1${digits}` : raw;
+          const parsed = window.libphonenumber.parsePhoneNumberFromString(candidate, "US");
+          const isValid = !!parsed && parsed.isValid() && parsed.country === "US";
+          phoneInput.setCustomValidity(isValid ? "" : "Enter a valid U.S. phone number");
+        })
+        .catch(() => {
+          // Fallback: structure-only (does not verify currently assigned/active area codes)
+          const digits = raw.replace(/\D/g, "");
+          const isTenOrEleven = digits.length === 10 || (digits.length === 11 && digits.startsWith("1"));
+          const structureOk = NANP_STRICT.test(raw);
+          const isValid = isTenOrEleven && structureOk;
+          phoneInput.setCustomValidity(isValid ? "" : "Enter a valid U.S. phone number");
+        })
+        .finally(() => {
+          phoneInput.reportValidity();
+        });
+    }
+
     phoneInput.addEventListener("blur", validatePhone);
     phoneInput.addEventListener("input", validatePhone);
   }
+
 
   if (form) {
     form.addEventListener("submit", (e) => {
