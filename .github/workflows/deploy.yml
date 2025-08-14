@@ -45,6 +45,6 @@ jobs:
         with:
           repository-name: enionismaili/ARIT-public-repo
           token: ${{ secrets.DEPLOY_TOKEN }}
-          branch: gh-pages
+          branch: main
           folder: dist
           clean: true
