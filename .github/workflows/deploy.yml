@@ -1,0 +1,50 @@
+name: Deploy static site to ARIT-public-repo
+
+on:
+  push:
+    branches: [ main ]   # change if your default branch is different
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # If your site is in a subfolder, set it here (e.g., SITE_DIR=site)
+      - name: Prepare dist
+        env:
+          SITE_DIR: .
+        run: |
+          mkdir -p dist
+          shopt -s dotglob extglob
+          cp -r $SITE_DIR/* dist/ || true
+          # keep Pages happy if you use folders starting with "_"
+          touch dist/.nojekyll
+
+      # Optional: set your custom domain (remove this step if you don't use one)
+      - name: Add CNAME
+        run: echo "aritconstruction.com" > dist/CNAME
+
+      # Optional: quick minify pass (safe defaults)
+      - name: Minify HTML/CSS/JS
+        run: |
+          npm i -g html-minifier-terser clean-css-cli terser
+          # HTML
+          find dist -name "*.html" -type f -exec sh -c \
+            'for f; do html-minifier-terser --collapse-whitespace --remove-comments --remove-optional-tags --minify-css true --minify-js true -o "$f" "$f"; done' sh {} +
+          # CSS
+          find dist -name "*.css" -type f -exec sh -c \
+            'for f; do cleancss -o "$f" "$f"; done' sh {} +
+          # JS
+          find dist -name "*.js" -type f -exec sh -c \
+            'for f; do terser "$f" -c -m -o "$f"; done' sh {} +
+
+      - name: Deploy to public repo
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          repository-name: enionismaili/ARIT-public-repo
+          token: ${{ secrets.DEPLOY_TOKEN }}
+          branch: gh-pages
+          folder: dist
+          clean: true
