@@ -392,8 +392,8 @@ header {
 
 /* ===== CTA BANNER ===== */
 .cta-banner {
-  background-color: #1f2937;
-  color: white;
+  background: linear-gradient(135deg, #0f172a, #1f2937);
+  color: #fff;
   padding: 60px 20px;
   text-align: center;
 }
@@ -947,5 +947,355 @@ button[type="submit"]:hover {
 @media (max-width:640px) {
   :root {
     --paint-blur: 0px;
+  }
+}
+
+
+
+
+
+
+
+/* =========================
+   DARK MODE — Neutral Slate
+   (auto: OS dark preference)
+   ========================= */
+@media (prefers-color-scheme: dark) {
+
+  /* ---- Palette (semantic) ---- */
+  :root {
+    --bg: #0e1116;
+    /* page background */
+    --surface: #12161c;
+    /* cards, sections */
+    --elevated: #161b22;
+    /* nav, hero glass, overlays */
+    --text: #e6e6e6;
+    /* main text */
+    --muted: #a7b0be;
+    /* secondary text */
+    --border: #2a3240;
+    /* lines, inputs */
+    --shadow: rgba(0, 0, 0, .45);
+    --overlay: rgba(18, 22, 28, .6);
+    --overlay-strong: rgba(18, 22, 28, .85);
+    --primary: #ffcc00;
+    /* your accent */
+    --primary-2: #e6b800;
+  }
+
+  /* ---- Base ---- */
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  header {
+    background-color: var(--elevated);
+  }
+
+  .navbar,
+  .logo,
+  .nav-links a {
+    color: var(--text);
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active {
+    color: var(--primary);
+  }
+
+  /* Mobile menu */
+  @media (max-width: 768px) {
+    .nav-links {
+      background-color: transparent;
+    }
+
+    .nav-links.open {
+      background-color: var(--overlay);
+      backdrop-filter: blur(12px);
+    }
+
+    .hamburger .bar {
+      background-color: var(--text);
+    }
+  }
+
+  /* ---- Hero ---- */
+  .hero {
+    color: var(--text);
+    background:
+      linear-gradient(var(--overlay), var(--overlay-strong)),
+      url('assets/home/hero.png') center/cover no-repeat;
+  }
+
+  .hero-content {
+    background: rgba(22, 27, 34, .55);
+    /* subtle glass */
+  }
+
+  .btn {
+    background-color: var(--primary);
+    color: #0b0d11;
+  }
+
+  .btn:hover {
+    background-color: var(--primary-2);
+  }
+
+  .btn-secondary {
+    border: 2px solid var(--text);
+    color: var(--text);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--text);
+    color: #0b0d11;
+  }
+
+  /* ---- Sections & Cards ---- */
+  .section h2,
+  .section-title {
+    color: #f5f7fa;
+  }
+
+  .section-subtitle {
+    color: var(--muted);
+  }
+
+  .service-card {
+    background-color: var(--surface);
+    box-shadow: 0 10px 28px var(--shadow);
+  }
+
+  .service-card h3 {
+    color: #f4f6f8;
+  }
+
+  .service-card p {
+    color: var(--muted);
+  }
+
+  .service-card-img {
+    box-shadow: 0 6px 20px var(--shadow);
+  }
+
+  .service-card-img .service-overlay {
+    background: var(--overlay);
+    color: var(--text);
+  }
+
+  .service-card-img:hover .service-overlay {
+    background: var(--overlay-strong);
+  }
+
+  .service-card-img .service-overlay h3 {
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, .95);
+  }
+
+  .service-card-img .service-overlay p {
+    color: #dde4ee;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, .9);
+  }
+
+  /* ---- Forms ---- */
+  input,
+  textarea {
+    background-color: #0f1319;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #91a0b4;
+  }
+
+  input:focus,
+  textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 204, 0, .22);
+    outline: none;
+  }
+
+  button[type="submit"] {
+    background-color: var(--primary);
+    color: #0b0d11;
+  }
+
+  button[type="submit"]:hover {
+    background-color: var(--primary-2);
+  }
+
+  /* ---- Footer ---- */
+  .footer-enhanced {
+    background-color: #0b0e13;
+    color: #d7dbe2;
+  }
+
+  .footer-contact h3,
+  .footer-map-section h3 {
+    color: var(--primary);
+  }
+
+  .contact-list a {
+    color: #ffd84d;
+  }
+
+  .contact-list a:hover {
+    color: var(--primary);
+  }
+
+  .footer-bottom {
+    color: #9aa7b8;
+    border-top: 1px solid var(--border);
+  }
+
+  .map-container {
+    box-shadow: 0 6px 22px var(--shadow);
+  }
+
+
+  .cta__title {
+    color: #ffffff;
+  }
+
+  .cta__subtitle {
+    color: var(--muted);
+  }
+
+  .cta__btn {
+    background-color: var(--primary);
+    color: #0b0d11;
+    box-shadow: 0 10px 26px rgba(255, 204, 0, .28);
+  }
+
+  .cta__btn:hover {
+    box-shadow: 0 12px 28px rgba(255, 204, 0, .36);
+  }
+
+  /* ---- Gallery & Lightbox ---- */
+  .gallery-grid img:hover {
+    box-shadow: 0 10px 24px var(--shadow);
+  }
+
+  .gallery-item .overlay {
+    background: rgba(22, 27, 34, .65);
+    color: var(--text);
+  }
+
+  .lightbox {
+    background: rgba(10, 12, 16, .92);
+  }
+
+  /* ---- Carousel ---- */
+  .carousel-nav.outer {
+    background: rgba(255, 255, 255, .08);
+    color: var(--text);
+  }
+
+  .carousel-nav.outer:hover {
+    background: rgba(255, 255, 255, .16);
+  }
+
+  input,
+  textarea {
+    background-color: #161b22;
+    /* dark surface always */
+    color: #f1f5f9;
+    border: 1px solid #2a3240;
+  }
+
+  input:focus,
+  textarea:focus {
+    background-color: #161b22;
+    /* keep same dark bg */
+    border-color: #ffcc00;
+    /* accent border */
+    box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.25);
+    outline: none;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #94a3b8;
+  }
+
+  .country-code {
+    background: #0f1319;
+    /* match dark */
+    color: #f1f5f9;
+    border-right: 1px solid #2a3240;
+  }
+
+  /* ---- Paint-Reveal ---- */
+  :root {
+    --roller-dark: #b9c2cc;
+    --roller-light: #d7dee6;
+    --paint-blur: 4px;
+  }
+
+  .cover-pane {
+    background: var(--bg);
+    backdrop-filter: blur(var(--paint-blur));
+  }
+}
+
+
+
+/* ---------- DARK MODE ONLY ---------- */
+@media (prefers-color-scheme: dark) {
+
+  /* keep dark bg when Chrome/Safari autofill */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #161b22 inset !important;
+    box-shadow: 0 0 0 1000px #161b22 inset !important;
+    -webkit-text-fill-color: #f1f5f9 !important;
+    caret-color: #f1f5f9 !important;
+    border: 1px solid #2a3240 !important;
+  }
+
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #161b22 inset !important;
+    box-shadow: 0 0 0 1000px #161b22 inset !important;
+    border-color: #ffcc00 !important;
+    outline: none !important;
+  }
+
+  /* only in dark mode */
+  form,
+  input,
+  textarea,
+  select,
+  button {
+    color-scheme: dark;
+  }
+}
+
+/* ---------- LIGHT MODE (explicit) ---------- */
+@media (prefers-color-scheme: light) {
+
+  /* ensure autofill stays light */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #1f2937 !important;
+    caret-color: #1f2937 !important;
+    border: 1px solid #ccc !important;
+  }
+
+  form,
+  input,
+  textarea,
+  select,
+  button {
+    color-scheme: light;
   }
 }
