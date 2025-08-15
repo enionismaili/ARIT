@@ -135,55 +135,121 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+
   // ===== Reviews carousel (guarded) =====
   const track = document.getElementById("carouselTrack");
   const container = document.querySelector(".carousel-container");
-  let interval, index = 0;
+  const btnPrev = document.getElementById("carouselPrev");
+  const btnNext = document.getElementById("carouselNext");
+  if (!(track && container && btnPrev && btnNext)) return;
 
-  if (track && container) {
-    const cards = Array.from(track.querySelectorAll(".review-card"));
-    function getVisibleCardsCount() {
-      if (window.innerWidth <= 600) return 1;
-      if (window.innerWidth <= 991) return 2;
-      return 3;
-    }
-    const visibleCount = Math.min(getVisibleCardsCount(), cards.length);
-    for (let i = 0; i < visibleCount; i++) {
-      track.appendChild(cards[i].cloneNode(true));
-    }
-    function getCardFullWidth() {
-      const card = track.querySelector(".review-card");
-      const style = window.getComputedStyle(card);
-      const width = card.offsetWidth;
-      const gap = parseFloat(style.marginRight) || 24;
-      return width + gap;
-    }
-    function slideCarousel() {
-      index++;
-      const cardWidth = getCardFullWidth();
-      track.style.transform = `translateX(-${index * cardWidth}px)`;
-      if (index >= cards.length) {
-        setTimeout(() => {
-          track.style.transition = "none";
-          track.style.transform = `translateX(0px)`;
-          index = 0;
-          setTimeout(() => { track.style.transition = "transform 0.5s ease-in-out"; }, 20);
-        }, 500);
-      }
-    }
-    function startAutoSlide() { interval = setInterval(slideCarousel, 3000); }
-    function stopAutoSlide() { clearInterval(interval); }
-    startAutoSlide();
-    container.addEventListener("mouseenter", stopAutoSlide);
-    container.addEventListener("mouseleave", startAutoSlide);
-    window.addEventListener("resize", () => {
-      stopAutoSlide(); index = 0;
-      track.style.transition = "none";
-      track.style.transform = `translateX(0px)`;
-      setTimeout(() => { track.style.transition = "transform 0.5s ease-in-out"; }, 20);
-      startAutoSlide();
+  const originals = Array.from(track.querySelectorAll(".review-card"));
+  let index = 0, V = 1, interval = null, isSnapping = false;
+
+  function visibleCount() {
+    if (window.innerWidth <= 600) return 1;
+    if (window.innerWidth <= 991) return 2;
+    return 3;
+  }
+
+  function cardStep() {
+    const card = track.querySelector(".review-card");
+    if (!card) return 0;
+    const w = card.getBoundingClientRect().width;
+    const style = window.getComputedStyle(track);
+    const gap = parseFloat(style.columnGap || style.gap || "0");
+    return w + gap;
+  }
+
+  function setTransform(i, instant = false) {
+    const step = cardStep();
+    if (!step) return;
+    if (instant) track.style.transition = "none";
+    track.style.transform = `translateX(-${i * step}px)`;
+    if (instant) requestAnimationFrame(() => {
+      track.style.transition = "transform 0.5s ease-in-out";
     });
   }
+
+  // TRUE infinite: clone V at both ends and start at offset V
+  function setupClones() {
+    // remove previous clones
+    track.querySelectorAll(".review-card.__clone").forEach(n => n.remove());
+
+    V = Math.min(visibleCount(), originals.length);
+
+    // prepend last V
+    for (let i = originals.length - V; i < originals.length; i++) {
+      const c = originals[i].cloneNode(true);
+      c.classList.add("__clone");
+      track.insertBefore(c, track.firstChild);
+    }
+    // append first V
+    for (let i = 0; i < V; i++) {
+      const c = originals[i].cloneNode(true);
+      c.classList.add("__clone");
+      track.appendChild(c);
+    }
+
+    // start at first real
+    index = V;
+    setTransform(index, true);
+  }
+
+  function slideNext() {
+    if (isSnapping) return;
+    index++;
+    setTransform(index);
+  }
+
+  function slidePrev() {
+    if (isSnapping) return;
+    index--;
+    setTransform(index);
+  }
+
+  function startAuto() { clearInterval(interval); interval = setInterval(slideNext, 3000); }
+  function stopAuto() { clearInterval(interval); }
+
+  // Snap invisibly when we enter clones
+  track.addEventListener("transitionend", () => {
+    const firstReal = V;
+    const lastReal = V + originals.length - 1;
+
+    if (index > lastReal) {
+      isSnapping = true;
+      index = firstReal;
+      setTransform(index, true);
+      isSnapping = false;
+    } else if (index < firstReal) {
+      isSnapping = true;
+      index = lastReal;
+      setTransform(index, true);
+      isSnapping = false;
+    }
+  });
+
+  // Init
+  setupClones();
+  startAuto();
+
+  // Interactions
+  container.addEventListener("mouseenter", stopAuto);
+  container.addEventListener("mouseleave", startAuto);
+  btnNext.addEventListener("click", () => { stopAuto(); slideNext(); startAuto(); });
+  btnPrev.addEventListener("click", () => { stopAuto(); slidePrev(); startAuto(); });
+  container.setAttribute("tabindex", "0");
+  container.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") { stopAuto(); slideNext(); startAuto(); }
+    if (e.key === "ArrowLeft") { stopAuto(); slidePrev(); startAuto(); }
+  });
+
+  // Rebuild on resize (so V/step update) and keep it seamless
+  window.addEventListener("resize", () => {
+    stopAuto();
+    setupClones();
+    startAuto();
+  });
 });
 
 

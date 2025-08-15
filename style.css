@@ -748,47 +748,76 @@ button[type="submit"]:hover {
 
 
 
-.reviews-carousel {
-  padding: 4rem 2rem;
-  text-align: center;
-  overflow: hidden;
-}
-
+/* Viewport */
 .carousel-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  overflow: hidden;
   position: relative;
-  padding: 0 1rem;
+  overflow: hidden;
 }
 
+/* Moving strip (spacing uses GAP!) */
 .carousel-track {
   display: flex;
-  gap: 1.5rem;
+  gap: 24px;
+  /* <<< add this */
   transition: transform 0.5s ease-in-out;
-  padding-bottom: 10px;
+  will-change: transform;
 }
 
+/* Desktop: exactly 3 cards (2 gaps -> 48px total) */
 .review-card {
-  flex: 0 0 calc((100% - 3rem) / 3);
-  /* Default: 3 cards */
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  text-align: left;
-  box-sizing: border-box;
+  flex: 0 0 calc((100% - 48px) / 3);
+  min-width: 0;
+  /* allow flex-basis to control width */
 }
 
-/* Tablet: 2 cards */
+
+
+/* harmless; overflow hidden */
+
+.carousel-shell {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  /* left button | carousel | right button */
+  align-items: center;
+  gap: 16px;
+}
+
+/* Buttons — now static (not absolutely positioned) */
+.carousel-nav.outer {
+  position: static;
+  /* important: sit outside as normal flow */
+  border: none;
+  background: rgba(0, 0, 0, 0.1);
+  color: #222;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.carousel-nav.outer:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.carousel-nav.outer:active {
+  transform: scale(0.96);
+}
+
+
+
+/* Tablet: 2 cards (1 gap -> 24px) */
 @media (max-width: 991px) {
   .review-card {
-    flex: 0 0 calc((100% - 1.5rem) / 2);
-    /* 2 cards, 1 gap */
+    flex: 0 0 calc((100% - 24px) / 2);
   }
 }
 
-/* Mobile: 1 card */
+/* Mobile: 1 card (no width calc) */
 @media (max-width: 600px) {
   .review-card {
     flex: 0 0 100%;

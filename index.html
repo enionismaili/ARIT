@@ -95,19 +95,21 @@
             <div class="service-card-img" style="background-image:url('assets/home/service1.png');">
                 <div class="service-overlay">
                     <h3>Residential Construction</h3>
-                    <p>From custom homes to renovations, we build with quality, integrity and excellence.</p>
+                    <p>Addressing homeowners with their property issues with any scale of projects, exterior or interior
+                        for their homes/properties insuring them with top referrals with decades of experience.</p>
+                </div>
+            </div>
+            <div class="service-card-img" style="background-image:url('assets/home/service3.png');">
+                <div class="service-overlay">
+                    <h3>Remodeling & Renovating</h3>
+                    <p>Exterior masonary work: brick-pointing, pattios, entire home-painting and whole-home
+                        transformations.</p>
                 </div>
             </div>
             <div class="service-card-img" style="background-image:url('assets/home/service2.png');">
                 <div class="service-overlay">
                     <h3>Tenant Improvements</h3>
                     <p>Helping management companies and realtors achieve their goals and keep their promises.</p>
-                </div>
-            </div>
-            <div class="service-card-img" style="background-image:url('assets/home/service3.png');">
-                <div class="service-overlay">
-                    <h3>Remodeling & Additions</h3>
-                    <p>Kitchen, bath, basement, and whole-home transformations.</p>
                 </div>
             </div>
         </div>
@@ -139,31 +141,40 @@
         </div>
     </section>
 
-    <!-- Reviews -->
     <section class="section reviews-carousel">
         <h2 class="section-title">Client Reviews 🛠️</h2>
         <p class="section-subtitle">Here’s what our clients say about working with us.</p>
-        <div class="carousel-container">
-            <div class="carousel-track" id="carouselTrack">
-                <div class="review-card">
-                    <p>"ARIT remodeled our home beautifully and on time. 10/10 service!"</p>
-                    <h4>- Michael T., Homeowner</h4>
-                </div>
-                <div class="review-card">
-                    <p>"They handled our office fit-out with professionalism and speed."</p>
-                    <h4>- Sarah L., Office Manager</h4>
-                </div>
-                <div class="review-card">
-                    <p>"The team transformed our basement into a stylish, livable space."</p>
-                    <h4>- Jamal K., DC Resident</h4>
-                </div>
-                <div class="review-card">
-                    <p>"Our embassy renovation went smoothly thanks to ARIT’s expertise."</p>
-                    <h4>- Embassy Manager</h4>
+
+        <!-- NEW: outer shell with 3 columns (left btn | carousel | right btn) -->
+        <div class="carousel-shell">
+            <button class="carousel-nav outer prev" id="carouselPrev" aria-label="Previous review">‹</button>
+            <!-- keep the same class/id so your JS continues to work -->
+            <div class="carousel-container">
+                <div class="carousel-track" id="carouselTrack">
+                    <div class="review-card">
+                        <p>"ARIT remodeled our home beautifully and on time. 10/10 service!"</p>
+                        <h4>- Michael T., Homeowner</h4>
+                    </div>
+                    <div class="review-card">
+                        <p>"They handled our office fit-out with professionalism and speed."</p>
+                        <h4>- Sarah L., Office Manager</h4>
+                    </div>
+                    <div class="review-card">
+                        <p>"The team transformed our basement into a stylish, livable space."</p>
+                        <h4>- Jamal K., DC Resident</h4>
+                    </div>
+                    <div class="review-card">
+                        <p>"Our embassy renovation went smoothly thanks to ARIT’s expertise."</p>
+                        <h4>- Embassy Manager</h4>
+                    </div>
                 </div>
             </div>
+
+            <button class="carousel-nav outer next" id="carouselNext" aria-label="Next review">›</button>
         </div>
     </section>
+
+
 
     <!-- CTAAA -->
     <section class="cta-banner">
