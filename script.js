@@ -254,15 +254,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-/* === Paint-Reveal Intro (global) === */
 (function () {
   'use strict';
 
-  // Don’t run if user prefers reduced motion
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // Create overlay elements on any page (no HTML changes needed)
   const overlay = document.createElement('div');
   overlay.className = 'paint-overlay';
   overlay.id = 'paintOverlay';
@@ -276,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
   canvas.id = 'rollerCanvas';
   overlay.appendChild(canvas);
 
-  // Insert at end of <body>
   document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(overlay);
     startPaintIntro(overlay, veilHost, canvas);
@@ -328,23 +323,18 @@ document.addEventListener("DOMContentLoaded", () => {
       c.closePath();
     }
 
-    // Dark/Light alternating texture that “spins”
     function headPattern(headH, offset, dark, light) {
-      const stripeW = Math.max(16, Math.round(headH * 0.35)); // thick
+      const stripeW = Math.max(16, Math.round(headH * 0.35));
       const patW = stripeW * 2;
       const patH = Math.max(8, Math.round(headH * 0.65));
       const cv = document.createElement('canvas');
       cv.width = patW; cv.height = patH;
       const c2 = cv.getContext('2d');
 
-      // base (light)
       c2.fillStyle = light; c2.fillRect(0, 0, patW, patH);
-
-      // moving dark stripe
       const x = ((Math.round(offset) % patW) + patW) % patW;
       c2.fillStyle = dark; c2.fillRect(x, 0, stripeW, patH);
 
-      // subtle cylindrical highlight/shadow
       const g = c2.createLinearGradient(0, 0, 0, patH);
       g.addColorStop(0.00, 'rgba(255,255,255,0.25)');
       g.addColorStop(0.55, 'rgba(255,255,255,0.00)');
@@ -354,11 +344,30 @@ document.addEventListener("DOMContentLoaded", () => {
       return ctx.createPattern(cv, 'repeat');
     }
 
+    // SINGLE cover layer that spans entire width
+    let singleClip = null;
+
     function build() {
       setCanvasSize();
       const count = decideCount(W);
-      veilHost.innerHTML = ''; rollers.length = 0;
 
+      // Reset host & rollers
+      veilHost.innerHTML = '';
+      rollers.length = 0;
+
+      // Create ONE clip/pane covering full width/height
+      singleClip = document.createElement('div');
+      singleClip.className = 'cover-clip';
+      singleClip.style.left = '0px';
+      singleClip.style.width = W + 'px';
+      singleClip.style.setProperty('--revealY', '0px');
+
+      const pane = document.createElement('div');
+      pane.className = 'cover-pane';
+      singleClip.appendChild(pane);
+      veilHost.appendChild(singleClip);
+
+      // Build rollers (1 for phone, 2 for desktop) — both share the SAME clip/pane
       const segW = W / count;
       const segGap = Math.max(16, Math.round(W * 0.015));
       const headH = Math.max(60, Math.min(110, Math.round(W * (count === 1 ? 0.08 : 0.055))));
@@ -372,6 +381,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const handleH = Math.max(90, Math.min(140, Math.round(W * 0.11)));
         const safety = Math.max(8, Math.round(W * 0.005));
         let headW = Math.round(segW - segGap * 2 - armLen - handleW - safety);
+
         const minHead = 180;
         if (headW < minHead) {
           const deficit = minHead - headW;
@@ -385,24 +395,11 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        // COVER column (starts opaque white)
-        const clip = document.createElement('div');
-        clip.className = 'cover-clip';
-        clip.style.left = segX + 'px';
-        clip.style.width = segW + 'px';
-        clip.style.setProperty('--revealY', '0px');
-
-        const pane = document.createElement('div');
-        pane.className = 'cover-pane';
-        clip.appendChild(pane);
-        veilHost.appendChild(clip);
-
         rollers.push({
           segX, segW,
           headX, headY: 0, headW, headH, headR: Math.min(18, Math.round(headH / 3)),
           armLen, handleW, handleH,
-          y: -headH - 24,
-          pane, clip
+          y: -headH - 24
         });
       }
     }
@@ -437,7 +434,8 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.stroke();
 
       // joint accent
-      ctx.fillStyle = '#ffc72c'; ctx.beginPath(); ctx.arc(rightX - 8, armY, 2.6, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffc72c';
+      ctx.beginPath(); ctx.arc(rightX - 8, armY, 2.6, 0, Math.PI * 2); ctx.fill();
 
       // handle
       const hx = rightX + armLen - Math.round(handleW / 2);
@@ -447,7 +445,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // subtle head shadow
       ctx.shadowColor = COL.shadow; ctx.shadowBlur = 8; ctx.shadowOffsetY = 3;
-      ctx.fillStyle = 'transparent'; roundedRect(ctx, headX, headY, headW, headH, headR); ctx.fill();
+      ctx.fillStyle = 'transparent';
+      roundedRect(ctx, headX, headY, headW, headH, headR); ctx.fill();
 
       ctx.restore();
     }
@@ -463,24 +462,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         ctx.clearRect(0, 0, W, H);
 
+        // Draw rollers & compute reveal depth (they move in sync; still robust if not)
+        let maxReveal = 0;
+
         rollers.forEach(r => {
           const over = Math.max(24, r.headH);
           r.y = -r.headH - 24 + eased * (H + over);
 
-          // hardware
           const circumference = Math.max(60, r.headH * Math.PI);
           const spinOffset = (eased * circumference) % (r.headH * 0.36 + 12);
           drawRoller(r, spinOffset);
 
-          // reveal (slightly behind the head)
           const revealY = Math.max(0, Math.min(H, r.y + r.headH * 0.6));
-          r.clip.style.setProperty('--revealY', revealY + 'px');
+          if (revealY > maxReveal) maxReveal = revealY;
         });
+
+        // Update the single cover layer once
+        if (singleClip) singleClip.style.setProperty('--revealY', maxReveal + 'px');
 
         if (t < 1) {
           requestAnimationFrame(loop);
         } else {
-          rollers.forEach(r => r.clip.style.setProperty('--revealY', H + 'px'));
+          if (singleClip) singleClip.style.setProperty('--revealY', H + 'px');
           overlay.classList.add('fade-out');
           overlay.addEventListener('animationend', () => overlay.setAttribute('hidden', ''), { once: true });
         }
@@ -492,12 +495,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function rebuildAndRestart() { build(); animate(); }
     function init() { build(); animate(); }
 
-    // Size + init
     const ro = new ResizeObserver(() => { setCanvasSize(); rebuildAndRestart(); });
     ro.observe(document.documentElement);
 
-    // Initial
     setCanvasSize(); init();
   }
-
 })();
