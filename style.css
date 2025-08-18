@@ -256,6 +256,8 @@ header {
   border-radius: 8px;
   font-weight: 600;
   transition: background 0.3s ease;
+  box-shadow: 0 8px 20px rgba(255, 204, 0, 0.25);
+
 }
 
 .btn:hover {
@@ -1297,5 +1299,211 @@ button[type="submit"]:hover {
   select,
   button {
     color-scheme: light;
+  }
+}
+
+
+/* =========================
+   THEME TOKENS (ONE SOURCE)
+   ========================= */
+:root {
+  /* Surfaces & text */
+  --bg-elevated: #eef1f5;
+  /* slightly darker gray so the quote card stands out on light bg */
+  --text-primary: #1f2937;
+
+  /* Accent / CTA */
+  --accent: #FFCC00;
+  --accent-ink: #0b0f14;
+  /* text on yellow */
+
+  /* Misc */
+  --border-quote: #ffffff;
+  /* left rule on the quote */
+}
+
+/* System dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-elevated: #171b22;
+    /* a bit lighter than a typical dark page bg */
+    --text-primary: #e5e7eb;
+  }
+}
+
+/* Manual dark-mode class (overrides system if you use it) */
+.dark {
+  --bg-elevated: #171b22;
+  --text-primary: #e5e7eb;
+}
+
+/* =========================
+   PRESS SECTION
+   ========================= */
+.press-mention {
+  max-width: 900px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Quote card */
+.press-quote {
+  display: block;
+  text-align: center;
+  font-style: italic;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border-left: 4px solid var(--border-quote);
+  padding: 1.1rem 1.25rem;
+  margin: 0 0 0.9rem;
+  border-radius: 12px;
+  text-wrap: balance;
+  /* nicer line breaks */
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.press-quote strong {
+  font-weight: 700;
+}
+
+/* Optional source line under the quote */
+.press-source {
+  color: var(--text-primary);
+  opacity: .8;
+  margin: 0 0 1rem;
+  font-style: italic;
+}
+
+/* Primary CTA button */
+.press-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .72rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: .2px;
+
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: 2px solid var(--accent);
+
+  box-shadow: 0 10px 30px rgba(255, 204, 0, .35);
+  transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+}
+
+.press-link::after {
+  content: "↗";
+  font-size: .95em;
+}
+
+.press-link:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 14px 34px rgba(255, 204, 0, .45);
+}
+
+.press-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 4px rgba(255, 204, 0, .35),
+    0 14px 34px rgba(255, 204, 0, .45);
+}
+
+.press-link:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 18px rgba(255, 204, 0, .32);
+}
+
+/* Mobile niceties */
+@media (max-width: 640px) {
+  .press-mention {
+    padding-inline: 1rem;
+  }
+
+  .press-link {
+    width: 100%;
+  }
+}
+
+.press-heading {
+  text-transform: none;
+  /* overrides your global uppercase on h2 */
+  letter-spacing: .02em;
+}
+
+.brand-wapo {
+  font-style: italic;
+}
+
+
+.quote-kicker {
+  display: block;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: .02em;
+  margin-bottom: .35rem;
+  opacity: .9;
+}
+
+
+
+
+
+/* ===== Universal Fixed Background Figures (Premium Line Art) ===== */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  isolation: isolate;
+}
+
+#universal-bg-figures {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  /* behind content */
+  pointer-events: none;
+  /* never blocks clicks */
+  overflow: visible;
+}
+
+/* Neutral gray that reads in light & dark modes */
+:root {
+  --fig-stroke: #8e95a3;
+  /* refined gray-blue stroke */
+  --fig-opacity: 0.30;
+  /* 0.20–0.38 depending on taste */
+}
+
+#universal-bg-figures .figure {
+  position: absolute;
+  opacity: 0;
+  /* fade-in from JS */
+  transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  transition: opacity 600ms ease, transform 700ms ease;
+  color: var(--fig-stroke);
+  filter: opacity(var(--fig-opacity)) drop-shadow(0 1px 0 rgba(0, 0, 0, .03));
+}
+
+/* Keep line weight consistent regardless of scale */
+#universal-bg-figures .figure svg path,
+#universal-bg-figures .figure svg rect,
+#universal-bg-figures .figure svg circle,
+#universal-bg-figures .figure svg line,
+#universal-bg-figures .figure svg polyline,
+#universal-bg-figures .figure svg polygon {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Slightly softer on mobile */
+@media (max-width: 640px) {
+  :root {
+    --fig-opacity: 0.20;
   }
 }

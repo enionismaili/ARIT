@@ -504,3 +504,144 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 (function () { 'use strict'; const rootMargin = '600px'; const inViewport = el => { const r = el.getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0 && r.left < innerWidth && r.right > 0; }; const areaInViewport = el => { const r = el.getBoundingClientRect(); const w = Math.max(0, Math.min(r.right, innerWidth) - Math.max(r.left, 0)); const h = Math.max(0, Math.min(r.bottom, innerHeight) - Math.max(r.top, 0)); return w * h; }; const setIntrinsic = img => { if (img.hasAttribute('width') && img.hasAttribute('height')) return; const write = () => { if (img.naturalWidth && img.naturalHeight) { img.setAttribute('width', img.naturalWidth); img.setAttribute('height', img.naturalHeight); } }; img.complete ? write() : img.addEventListener('load', write, { once: true }); }; const promote = img => { img.setAttribute('loading', 'eager'); img.setAttribute('decoding', 'async'); img.setAttribute('fetchpriority', 'high'); }; const hydrate = img => { if (img.dataset.hydrated === '1') return; const pic = img.parentElement?.tagName === 'PICTURE' ? img.parentElement : null; if (pic) pic.querySelectorAll('source').forEach(s => s.dataset.srcset && (s.srcset = s.dataset.srcset)); if (img.dataset.srcset) img.srcset = img.dataset.srcset; if (img.dataset.sizes) img.sizes = img.dataset.sizes; if (img.dataset.src) img.src = img.dataset.src; img.dataset.hydrated = '1'; }; const ioImgs = new IntersectionObserver((entries, obs) => { entries.forEach(e => { if (!e.isIntersecting) return; const img = e.target; img.setAttribute('loading', img.getAttribute('loading') || 'lazy'); img.setAttribute('decoding', 'async'); if (img.dataset.src || img.dataset.srcset) hydrate(img); setIntrinsic(img); obs.unobserve(img); }); }, { rootMargin }); const ioBg = new IntersectionObserver((entries, obs) => { entries.forEach(e => { if (!e.isIntersecting) return; const el = e.target, bg = el.dataset.bg; if (bg) { el.style.backgroundImage = `url("${bg}")`; el.style.backgroundSize = el.style.backgroundSize || 'cover'; el.style.backgroundPosition = el.style.backgroundPosition || 'center'; el.style.backgroundRepeat = el.style.backgroundRepeat || 'no-repeat'; } obs.unobserve(el); }); }, { rootMargin }); const init = () => { const imgs = Array.from(document.images); const priority = imgs.find(i => i.hasAttribute('data-priority')) || imgs.filter(inViewport).sort((a, b) => areaInViewport(b) - areaInViewport(a))[0]; if (priority) { promote(priority); if (priority.dataset.src || priority.dataset.srcset) hydrate(priority); setIntrinsic(priority); } imgs.forEach(img => { if (img === priority) return; img.setAttribute('decoding', 'async'); if (img.dataset.src || img.dataset.srcset) ioImgs.observe(img); else if (!inViewport(img)) img.setAttribute('loading', 'lazy'), setIntrinsic(img); else setIntrinsic(img); }); document.querySelectorAll('[data-bg]').forEach(el => ioBg.observe(el)); }; document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', init, { once: true }) : init(); })();
+
+
+
+(function () {
+  /* ===== Premium Architectural Line Art (monoline, detailed) =====
+     All strokes inherit color from CSS (currentColor) and use non-scaling-stroke.
+     Stroke width slightly heavier for a “premium print” feel.
+  */
+  const ATTR = `fill="none" stroke="currentColor" stroke-width="1.4" 
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"`;
+
+  const ICONS = {
+    /* Two-story facade with gable & garage suggestion */
+    facade: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
+      <path d="M3 12 L12 4 L21 12" />
+      <rect x="5" y="12" width="14" height="8" rx="0.6"></rect>
+      <rect x="8" y="14" width="3.2" height="2.8" rx="0.4"></rect>
+      <rect x="12.8" y="14" width="3.2" height="2.8" rx="0.4"></rect>
+      <rect x="11" y="16" width="2" height="4" rx="0.4"></rect>
+      <circle cx="12.6" cy="18" r="0.35" fill="currentColor"></circle>
+      <!-- ridge + soffit lines -->
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="12" y1="4" x2="12" y2="6.2"></line>
+    </svg>`,
+
+    /* Kitchen: island/cabinet linework, sink & faucet, hob */
+    kitchen: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
+      <!-- top shelf / backsplash -->
+      <rect x="4" y="6" width="16" height="2.6" rx="0.5"></rect>
+      <!-- wall cabinets suggestion -->
+      <rect x="4.8" y="6.6" width="3.6" height="1.4" rx="0.2"></rect>
+      <rect x="9.2" y="6.6" width="3.6" height="1.4" rx="0.2"></rect>
+      <rect x="13.6" y="6.6" width="3.6" height="1.4" rx="0.2"></rect>
+
+      <!-- counter/island -->
+      <rect x="4" y="11" width="16" height="7" rx="0.6"></rect>
+      <!-- drawers -->
+      <line x1="8.5" y1="11" x2="8.5" y2="18"></line>
+      <line x1="15.5" y1="11" x2="15.5" y2="18"></line>
+      <!-- handles -->
+      <line x1="6.2" y1="13" x2="7.8" y2="13"></line>
+      <line x1="6.2" y1="15.2" x2="7.8" y2="15.2"></line>
+      <line x1="6.2" y1="17.4" x2="7.8" y2="17.4"></line>
+      <line x1="16.2" y1="13" x2="17.8" y2="13"></line>
+      <line x1="16.2" y1="15.2" x2="17.8" y2="15.2"></line>
+      <line x1="16.2" y1="17.4" x2="17.8" y2="17.4"></line>
+
+      <!-- sink & faucet on counter -->
+      <rect x="10.1" y="9" width="3.4" height="1.4" rx="0.3"></rect>
+      <path d="M12 8.2c1 0 1.4.3 1.6 1.1"></path>
+      <path d="M11.2 8.7c0-.6.3-1 .8-1"></path>
+
+      <!-- hob suggestion -->
+      <circle cx="6.5" cy="9.7" r="0.7"></circle>
+      <circle cx="8.4" cy="9.7" r="0.5"></circle>
+    </svg>`,
+
+    /* Bathroom: vanity + mirror + faucet */
+    bathroom: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
+      <!-- mirror -->
+      <rect x="8" y="3.8" width="8" height="5.8" rx="0.8"></rect>
+      <line x1="9" y1="5.1" x2="12.2" y2="5.1"></line>
+      <line x1="9" y1="6.7" x2="10.8" y2="6.7"></line>
+
+      <!-- vanity -->
+      <rect x="5" y="12.2" width="14" height="6.5" rx="0.6"></rect>
+      <line x1="9.5" y1="12.2" x2="9.5" y2="18.7"></line>
+      <line x1="14.5" y1="12.2" x2="14.5" y2="18.7"></line>
+      <!-- pulls -->
+      <line x1="6.6" y1="14.2" x2="8.2" y2="14.2"></line>
+      <line x1="6.6" y1="16.6" x2="8.2" y2="16.6"></line>
+      <line x1="11.6" y1="14.2" x2="13.2" y2="14.2"></line>
+      <line x1="11.6" y1="16.6" x2="13.2" y2="16.6"></line>
+
+      <!-- faucet/sink -->
+      <rect x="7.4" y="10.3" width="3.6" height="1.2" rx="0.3"></rect>
+      <path d="M9.2 9.8c1 0 1.5.3 1.7 1"></path>
+      <path d="M8.6 10.3c0-.6.3-1 .9-1"></path>
+    </svg>`,
+
+    /* Stair + railing (architectural) */
+    stair: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
+      <!-- stringer -->
+      <path d="M4 18 L12.2 9.8 L20 9.8"></path>
+      <!-- treads -->
+      <line x1="6.2" y1="15.8" x2="11.1" y2="15.8"></line>
+      <line x1="8.4" y1="13.6" x2="13.0" y2="13.6"></line>
+      <line x1="10.3" y1="11.7" x2="15.0" y2="11.7"></line>
+      <!-- handrail -->
+      <path d="M4.8 8.8 L13.5 8.8 L18.6 6.8"></path>
+      <!-- posts -->
+      <line x1="6.6" y1="9" x2="6.6" y2="15.8"></line>
+      <line x1="8.9" y1="9" x2="8.9" y2="13.6"></line>
+      <line x1="11.1" y1="9" x2="11.1" y2="11.7"></line>
+    </svg>`,
+
+    /* Window set with mullions & trim */
+    windowset: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
+      <rect x="4" y="6" width="16" height="12" rx="0.8"></rect>
+      <line x1="12" y1="6" x2="12" y2="18"></line>
+      <line x1="4" y1="12" x2="20" y2="12"></line>
+      <!-- sill & header trim -->
+      <line x1="3.2" y1="5.2" x2="20.8" y2="5.2"></line>
+      <line x1="3.2" y1="18.8" x2="20.8" y2="18.8"></line>
+    </svg>`
+  };
+
+  /* Place fewer/larger figures for a calmer, premium feel.
+     Tweak x/y (vw/vh) to frame whitespace in your sections. */
+  const FIGURES = [
+    { icon: 'facade', x: 18, y: 30, scale: 1.00, rotate: -2 },
+    { icon: 'windowset', x: 80, y: 26, scale: 0.98, rotate: 4 },
+    { icon: 'kitchen', x: 60, y: 74, scale: 1.06, rotate: 0 },
+    { icon: 'stair', x: 14, y: 66, scale: 1.08, rotate: -8 },
+    { icon: 'bathroom', x: 76, y: 71, scale: 1.02, rotate: 3 }
+  ];
+
+  function mountPremiumFigures() {
+    const holder = document.getElementById('universal-bg-figures');
+    if (!holder) return;
+
+    holder.innerHTML = '';
+    FIGURES.forEach((f, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'figure';
+      wrap.style.left = f.x + 'vw';
+      wrap.style.top = f.y + 'vh';
+      wrap.style.transform = `translate(-50%, -50%) scale(${f.scale}) rotate(${f.rotate}deg)`;
+      wrap.style.transitionDelay = (i * 90) + 'ms';
+      wrap.innerHTML = ICONS[f.icon] || '';
+      holder.appendChild(wrap);
+      requestAnimationFrame(() => (wrap.style.opacity = '1'));
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountPremiumFigures, { once: true });
+  } else {
+    mountPremiumFigures();
+  }
+})();
