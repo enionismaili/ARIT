@@ -93,7 +93,7 @@ header {
 }
 
 .logo {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: white;
 }
@@ -221,28 +221,33 @@ header {
 
 
 
-/* ===== HERO SECTION ===== */
+/* ===== HERO SECTION (desktop unchanged, mobile fixed) ===== */
 .hero {
+  position: relative;
   min-height: 600px;
+  /* keep your original desktop height */
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  color: white;
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+  color: #fff;
+  background:
+    linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, .7)),
     url('assets/home/hero.png') center/cover no-repeat;
 }
 
-
+/* content (desktop look stays the same) */
 .hero-content {
   max-width: 700px;
   padding: 40px;
   background: rgba(0, 0, 0, 0.4);
   border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .2);
 }
 
 .hero-content h2 {
   font-size: 2.8rem;
+  line-height: 1.1;
   margin-bottom: 20px;
 }
 
@@ -251,6 +256,57 @@ header {
   margin-bottom: 30px;
 }
 
+/* ===== MOBILE FIXES ===== */
+@media (max-width: 640px) {
+  .hero {
+    min-height: 100svh;
+    /* fill the screen on phones */
+    padding: 0 12px;
+    /* darker at the bottom so text pops, better top crop */
+    background:
+      linear-gradient(to bottom,
+        rgba(0, 0, 0, .15) 0%,
+        rgba(0, 0, 0, .35) 35%,
+        rgba(0, 0, 0, .75) 100%),
+      url('assets/home/hero.png') center top/cover no-repeat;
+  }
+
+  /* remove the heavy box on phones; keep clean full-bleed text */
+  .hero-content {
+    background: transparent;
+    border-radius: 0;
+    padding: 0 8px 18px;
+    max-width: 560px;
+    margin: 0 auto 18px;
+    box-shadow: none;
+  }
+
+  .hero-content h2 {
+    font-size: clamp(1.75rem, 8vw, 2.2rem);
+  }
+
+  .hero-content p {
+    font-size: clamp(0.95rem, 3.6vw, 1.1rem);
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    padding: 12px 22px;
+  }
+}
+
+/* Optional: slight polish on large screens only */
+@media (min-width: 1024px) {
+  .hero {
+    background-position: center;
+  }
+
+  .hero-content {
+    padding: 48px;
+  }
+}
+
+/* Button (as you had) */
 .btn {
   display: inline-block;
   background-color: #ffcc00;
@@ -258,9 +314,8 @@ header {
   padding: 12px 25px;
   border-radius: 8px;
   font-weight: 600;
-  transition: background 0.3s ease;
+  transition: background .3s ease;
   box-shadow: 0 8px 20px rgba(255, 204, 0, 0.25);
-
 }
 
 .btn:hover {
@@ -844,6 +899,43 @@ button[type="submit"]:hover {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
 
+
+
+/* MOBILE ONLY (e.g., iPhone 12 Pro) */
+@media (max-width: 640px) {
+
+  /* give the track a tiny vertical buffer and let the 1px line render */
+  .carousel-container {
+    overflow-x: hidden;
+    overflow-y: visible;
+    padding-block: 4px;
+  }
+
+  /* simulate the border with an inset shadow so Safari doesn't clip it */
+  .review-card {
+    border: 1px solid transparent;
+    /* keep radius, avoid double line */
+    box-shadow:
+      0 0 0 1px var(--rc-border) inset,
+      0 6px 20px rgba(0, 0, 0, 0.06);
+    -webkit-transform: translateZ(0);
+    /* iOS layer fix */
+    transform: translateZ(0);
+  }
+
+  .review-card:hover {
+    box-shadow:
+      0 0 0 1px var(--rc-border-hover) inset,
+      0 10px 25px rgba(0, 0, 0, 0.10);
+  }
+
+  /* extra nudge on iOS only */
+  @supports (-webkit-touch-callout: none) {
+    .carousel-container {
+      padding-bottom: 6px;
+    }
+  }
+}
 
 
 
