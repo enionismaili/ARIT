@@ -223,7 +223,6 @@ header {
 
 /* ===== HERO SECTION ===== */
 .hero {
-  height: calc(100vh - 70px);
   min-height: 600px;
   display: flex;
   justify-content: center;
@@ -1580,4 +1579,29 @@ body {
   :root {
     --fig-opacity: 0.20;
   }
+}
+
+
+:root {
+  --header-h: 72px;
+}
+
+/* fallback */
+
+body {
+  padding-top: var(--header-h);
+}
+
+.hero {
+  height: calc(100vh - var(--header-h));
+}
+
+/* anchors don’t get hidden behind the fixed header */
+[id] {
+  scroll-margin-top: calc(var(--header-h) + 12px);
+}
+
+/* your shadow class from JS */
+header.sticky-shadow {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
 }

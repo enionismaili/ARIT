@@ -5,6 +5,34 @@ window.addEventListener("scroll", function () {
   else header.classList.remove("sticky-shadow");
 });
 
+(function () {
+  const header = document.querySelector("header");
+  if (!header) return;
+
+  function setHeaderOffset() {
+    const h = Math.ceil(header.getBoundingClientRect().height);
+    document.documentElement.style.setProperty("--header-h", `${h}px`);
+  }
+
+  // initial + on resize
+  window.addEventListener("load", setHeaderOffset);
+  window.addEventListener("resize", setHeaderOffset);
+
+  // in case fonts wrap the navbar later
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(setHeaderOffset);
+  }
+
+  // react to header height changes (e.g., layout shifts)
+  if (window.ResizeObserver) {
+    new ResizeObserver(setHeaderOffset).observe(header);
+  }
+
+  // run once now
+  setHeaderOffset();
+})();
+
+
 document.addEventListener("DOMContentLoaded", () => {
   // ===== Mobile menu =====
   const hamburger = document.getElementById("hamburger");
