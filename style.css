@@ -70,9 +70,13 @@ ul {
 
 /* ===== HEADER ===== */
 header {
-  position: sticky;
+  position: fixed;
+  /* was: sticky */
   top: 0;
-  z-index: 1000;
+  left: 0;
+  right: 0;
+  z-index: 4000;
+  /* above content/sections */
   background-color: #1f2937;
 }
 
@@ -351,18 +355,50 @@ header {
   margin-top: 40px;
 }
 
+/* If not already present from the review-card snippet */
+:root {
+  --rc-bg: #ffffff;
+  --rc-border: rgba(0, 0, 0, 0.12);
+  --rc-border-hover: rgba(0, 0, 0, 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rc-bg: #0b0f14;
+    --rc-border: rgba(255, 255, 255, 0.18);
+    --rc-border-hover: rgba(255, 255, 255, 0.32);
+  }
+}
+
+.dark {
+  --rc-bg: #0b0f14;
+  --rc-border: rgba(255, 255, 255, 0.18);
+  --rc-border-hover: rgba(255, 255, 255, 0.32);
+}
+
+/* Updated service-card */
 .service-card {
-  background-color: #fff;
+  background: var(--rc-bg);
   padding: 25px;
   border-radius: 10px;
+  border: 1px solid var(--rc-border);
+  /* NEW: border */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+  /* smooth theme switch */
 }
 
 .service-card:hover {
   transform: translateY(-5px);
+  border-color: var(--rc-border-hover);
+  /* NEW: hover border */
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
+
 
 .service-card h3 {
   font-size: 1.3rem;
@@ -766,11 +802,49 @@ button[type="submit"]:hover {
 }
 
 /* Desktop: exactly 3 cards (2 gaps -> 48px total) */
+/* Theme vars (light by default) */
+:root {
+  --rc-bg: #ffffff;
+  --rc-border: rgba(0, 0, 0, 0.12);
+  --rc-border-hover: rgba(0, 0, 0, 0.22);
+}
+
+/* Respect system dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rc-bg: #0b0f14;
+    --rc-border: rgba(255, 255, 255, 0.18);
+    --rc-border-hover: rgba(255, 255, 255, 0.32);
+  }
+}
+
+/* If you use a class-based dark mode (e.g., Tailwind's .dark) */
+.dark {
+  --rc-bg: #0b0f14;
+  --rc-border: rgba(255, 255, 255, 0.18);
+  --rc-border-hover: rgba(255, 255, 255, 0.32);
+}
+
 .review-card {
   flex: 0 0 calc((100% - 48px) / 3);
   min-width: 0;
-  /* allow flex-basis to control width */
+  box-sizing: border-box;
+  /* ensures border doesn't break your width calc */
+  background: var(--rc-bg);
+  border: 1px solid var(--rc-border);
+  /* NEW: border */
+  border-radius: 12px;
+  /* optional but looks nice */
+  padding: 16px;
+  /* adjust as needed */
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
+
+.review-card:hover {
+  border-color: var(--rc-border-hover);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
 
 
 

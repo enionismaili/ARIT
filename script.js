@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setTransform(index);
   }
 
-  function startAuto() { clearInterval(interval); interval = setInterval(slideNext, 3000); }
+  function startAuto() { clearInterval(interval); interval = setInterval(slideNext, 5000); }
   function stopAuto() { clearInterval(interval); }
 
   // Snap invisibly when we enter clones
