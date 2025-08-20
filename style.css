@@ -1620,7 +1620,7 @@ button[type="submit"]:hover {
 
 
 
-/* ===== Universal Fixed Background Figures (Premium Line Art) ===== */
+/* Fixed layer for background figures */
 html,
 body {
   height: 100%;
@@ -1634,46 +1634,49 @@ body {
   position: fixed;
   inset: 0;
   z-index: -1;
-  /* behind content */
+  /* behind all content */
   pointer-events: none;
   /* never blocks clicks */
-  overflow: visible;
 }
 
-/* Neutral gray that reads in light & dark modes */
+/* Subtle premium gray that works on light/dark */
 :root {
   --fig-stroke: #8e95a3;
-  /* refined gray-blue stroke */
-  --fig-opacity: 0.30;
-  /* 0.20–0.38 depending on taste */
+  /* refine if needed */
+  --fig-opacity: .30;
+  /* .22–.36 to taste */
 }
 
 #universal-bg-figures .figure {
   position: absolute;
-  opacity: 0;
-  /* fade-in from JS */
   transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  opacity: 0;
+  /* fade in via JS */
   transition: opacity 600ms ease, transform 700ms ease;
   color: var(--fig-stroke);
   filter: opacity(var(--fig-opacity)) drop-shadow(0 1px 0 rgba(0, 0, 0, .03));
 }
 
-/* Keep line weight consistent regardless of scale */
-#universal-bg-figures .figure svg path,
-#universal-bg-figures .figure svg rect,
-#universal-bg-figures .figure svg circle,
-#universal-bg-figures .figure svg line,
-#universal-bg-figures .figure svg polyline,
-#universal-bg-figures .figure svg polygon {
+/* keep strokes crisp while scaling */
+#universal-bg-figures .figure svg * {
   vector-effect: non-scaling-stroke;
 }
 
-/* Slightly softer on mobile */
+/* softer on small screens */
 @media (max-width: 640px) {
   :root {
-    --fig-opacity: 0.20;
+    --fig-opacity: .22;
   }
 }
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #universal-bg-figures .figure {
+    transition: opacity .3s ease;
+  }
+}
+
+
 
 
 :root {

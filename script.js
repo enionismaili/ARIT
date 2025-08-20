@@ -535,141 +535,242 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-(function () {
-  /* ===== Premium Architectural Line Art (monoline, detailed) =====
-     All strokes inherit color from CSS (currentColor) and use non-scaling-stroke.
-     Stroke width slightly heavier for a “premium print” feel.
-  */
-  const ATTR = `fill="none" stroke="currentColor" stroke-width="1.4" 
-                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"`;
+// (function () {
+//   // Common stroke attributes
+//   const ATTR = `fill="none" stroke="currentColor" stroke-width="1.35"
+//   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"`;
+//   const SVG = (w, h, inner, vb = "0 0 240 240") =>
+//     `<svg width="${w}" height="${h}" viewBox="${vb}" ${ATTR}><g vector-effect="non-scaling-stroke">${inner}</g></svg>`;
 
-  const ICONS = {
-    /* Two-story facade with gable & garage suggestion */
-    facade: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
-      <path d="M3 12 L12 4 L21 12" />
-      <rect x="5" y="12" width="14" height="8" rx="0.6"></rect>
-      <rect x="8" y="14" width="3.2" height="2.8" rx="0.4"></rect>
-      <rect x="12.8" y="14" width="3.2" height="2.8" rx="0.4"></rect>
-      <rect x="11" y="16" width="2" height="4" rx="0.4"></rect>
-      <circle cx="12.6" cy="18" r="0.35" fill="currentColor"></circle>
-      <!-- ridge + soffit lines -->
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="12" y1="4" x2="12" y2="6.2"></line>
-    </svg>`,
+//   // ===== Realistic architectural drawings =====
+//   const FIGS = {
+//     // Cozy Family Home Silhouette (gable, porch, real windows)
+//     cozyHome: SVG(190, 170, `
+//   <path d="M36 124 L120 52 L204 124"></path>
+//   <rect x="56" y="124" width="128" height="56" rx="3"></rect>
+//   <rect x="72" y="138" width="20" height="18"></rect>
+//   <rect x="98" y="138" width="20" height="18"></rect>
+//   <rect x="148" y="138" width="24" height="24"></rect>
+//   <rect x="114" y="132" width="18" height="48" rx="2"></rect>
+//   <circle cx="127" cy="156" r="1.8" fill="currentColor"></circle>
+//   <rect x="56" y="116" width="128" height="8"></rect> <!-- soffit band -->
+//   `),
 
-    /* Kitchen: island/cabinet linework, sink & faucet, hob */
-    kitchen: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
-      <!-- top shelf / backsplash -->
-      <rect x="4" y="6" width="16" height="2.6" rx="0.5"></rect>
-      <!-- wall cabinets suggestion -->
-      <rect x="4.8" y="6.6" width="3.6" height="1.4" rx="0.2"></rect>
-      <rect x="9.2" y="6.6" width="3.6" height="1.4" rx="0.2"></rect>
-      <rect x="13.6" y="6.6" width="3.6" height="1.4" rx="0.2"></rect>
+//     // Modern Two-Story Outline (clean volumes + glazing)
+//     modernTwoStory: SVG(200, 170, `
+//   <rect x="52" y="42" width="100" height="30" rx="2"></rect>
+//   <rect x="52" y="72" width="136" height="70" rx="2"></rect>
+//   <rect x="64" y="82" width="26" height="20"></rect>
+//   <rect x="96" y="82" width="26" height="20"></rect>
+//   <rect x="128" y="82" width="48" height="46"></rect>
+//   <rect x="100" y="122" width="22" height="20"></rect>
+//   <line x1="52" y1="142" x2="188" y2="142"></line>
+//   `),
 
-      <!-- counter/island -->
-      <rect x="4" y="11" width="16" height="7" rx="0.6"></rect>
-      <!-- drawers -->
-      <line x1="8.5" y1="11" x2="8.5" y2="18"></line>
-      <line x1="15.5" y1="11" x2="15.5" y2="18"></line>
-      <!-- handles -->
-      <line x1="6.2" y1="13" x2="7.8" y2="13"></line>
-      <line x1="6.2" y1="15.2" x2="7.8" y2="15.2"></line>
-      <line x1="6.2" y1="17.4" x2="7.8" y2="17.4"></line>
-      <line x1="16.2" y1="13" x2="17.8" y2="13"></line>
-      <line x1="16.2" y1="15.2" x2="17.8" y2="15.2"></line>
-      <line x1="16.2" y1="17.4" x2="17.8" y2="17.4"></line>
+//     // Craftsman Facade (gable, tapered posts, paneled door)
+//     craftsmanFacade: SVG(200, 170, `
+//   <path d="M40 120 L120 62 L200 120"></path>
+//   <rect x="52" y="120" width="136" height="56"></rect>
+//   <rect x="68" y="120" width="22" height="56"></rect>
+//   <rect x="150" y="120" width="22" height="56"></rect>
+//   <rect x="108" y="140" width="26" height="36"></rect>
+//   <line x1="108" y1="158" x2="134" y2="158"></line>
+//   <rect x="88" y="132" width="14" height="18"></rect>
+//   <rect x="140" y="132" width="14" height="18"></rect>
+//   `),
 
-      <!-- sink & faucet on counter -->
-      <rect x="10.1" y="9" width="3.4" height="1.4" rx="0.3"></rect>
-      <path d="M12 8.2c1 0 1.4.3 1.6 1.1"></path>
-      <path d="M11.2 8.7c0-.6.3-1 .8-1"></path>
+//     // Classic Brick Ranch Elevation (running-bond hatch)
+//     brickRanch: SVG(200, 150, `
+//   <path d="M40 100 L120 64 L200 100"></path>
+//   <rect x="40" y="100" width="160" height="44" rx="2"></rect>
+//   ${[0, 1, 2, 3, 4].map(r => `<line x1="40" y1="${110 + r * 8}" x2="200" y2="${110 + r * 8}"></line>`).join('')}
+//   ${[0, 1, 2, 3, 4].map(r => {
+//       const y = 106 + r * 8, xs = r % 2 ? [60, 100, 140, 180] : [40, 80, 120, 160, 200];
+//       return xs.map(x => `<line x1="${x}" y1="${y - 4}" x2="${x}" y2="${y + 4}"></line>`).join('');
+//     }).join('')}
+//   <rect x="64" y="110" width="24" height="16"></rect>
+//   <rect x="108" y="110" width="24" height="16"></rect>
+//   <rect x="152" y="110" width="24" height="16"></rect>
+//   <rect x="120" y="120" width="16" height="24"></rect>
+//   `),
 
-      <!-- hob suggestion -->
-      <circle cx="6.5" cy="9.7" r="0.7"></circle>
-      <circle cx="8.4" cy="9.7" r="0.5"></circle>
-    </svg>`,
+//     // Roof & Gable with shingles, ridge & chimney
+//     roofGable: SVG(190, 150, `
+//   <path d="M40 102 L120 44 L200 102"></path>
+//   <line x1="40" y1="102" x2="200" y2="102"></line>
+//   <rect x="134" y="56" width="16" height="18"></rect> <!-- chimney -->
+//   ${[0, 1, 2, 3, 4].map(i => `<line x1="${52 + i * 28}" y1="90" x2="${72 + i * 28}" y2="90"></line>`).join('')}
+//   <line x1="120" y1="44" x2="120" y2="58"></line>
+//   `),
 
-    /* Bathroom: vanity + mirror + faucet */
-    bathroom: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
-      <!-- mirror -->
-      <rect x="8" y="3.8" width="8" height="5.8" rx="0.8"></rect>
-      <line x1="9" y1="5.1" x2="12.2" y2="5.1"></line>
-      <line x1="9" y1="6.7" x2="10.8" y2="6.7"></line>
+//     // Entry Door with Sidelights (realistic)
+//     entryDoorSidelights: SVG(180, 170, `
+//   <rect x="58" y="50" width="124" height="140" rx="3"></rect>
+//   <rect x="66" y="60" width="18" height="120"></rect>
+//   <rect x="156" y="60" width="18" height="120"></rect>
+//   <rect x="96" y="66" width="48" height="102" rx="2"></rect>
+//   <line x1="138" y1="118" x2="146" y2="118"></line>
+//   <circle cx="135" cy="118" r="1.8" fill="currentColor"></circle>
+//   `),
 
-      <!-- vanity -->
-      <rect x="5" y="12.2" width="14" height="6.5" rx="0.6"></rect>
-      <line x1="9.5" y1="12.2" x2="9.5" y2="18.7"></line>
-      <line x1="14.5" y1="12.2" x2="14.5" y2="18.7"></line>
-      <!-- pulls -->
-      <line x1="6.6" y1="14.2" x2="8.2" y2="14.2"></line>
-      <line x1="6.6" y1="16.6" x2="8.2" y2="16.6"></line>
-      <line x1="11.6" y1="14.2" x2="13.2" y2="14.2"></line>
-      <line x1="11.6" y1="16.6" x2="13.2" y2="16.6"></line>
+//     // Bay Window Profile (projection lines + mullions)
+//     bayWindow: SVG(190, 160, `
+//   <path d="M60 118 L92 92 L148 92 L180 118"></path>
+//   <rect x="84" y="92" width="28" height="28"></rect>
+//   <rect x="116" y="92" width="28" height="28"></rect>
+//   <line x1="60" y1="118" x2="180" y2="118"></line>
+//   <line x1="92" y1="92" x2="92" y2="122"></line>
+//   <line x1="148" y1="92" x2="148" y2="122"></line>
+//   `),
 
-      <!-- faucet/sink -->
-      <rect x="7.4" y="10.3" width="3.6" height="1.2" rx="0.3"></rect>
-      <path d="M9.2 9.8c1 0 1.5.3 1.7 1"></path>
-      <path d="M8.6 10.3c0-.6.3-1 .9-1"></path>
-    </svg>`,
+//     // Garage Door Panel Pattern
+//     garageDoorPanels: SVG(190, 130, `
+//   <rect x="50" y="62" width="140" height="54" rx="2"></rect>
+//   ${[0, 1, 2, 3].map(i => `<rect x="${56 + i * 34}" y="68" width="28" height="18"></rect>`).join('')}
+//   ${[0, 1, 2, 3].map(i => `<rect x="${56 + i * 34}" y="92" width="28" height="18"></rect>`).join('')}
+//   `),
 
-    /* Stair + railing (architectural) */
-    stair: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
-      <!-- stringer -->
-      <path d="M4 18 L12.2 9.8 L20 9.8"></path>
-      <!-- treads -->
-      <line x1="6.2" y1="15.8" x2="11.1" y2="15.8"></line>
-      <line x1="8.4" y1="13.6" x2="13.0" y2="13.6"></line>
-      <line x1="10.3" y1="11.7" x2="15.0" y2="11.7"></line>
-      <!-- handrail -->
-      <path d="M4.8 8.8 L13.5 8.8 L18.6 6.8"></path>
-      <!-- posts -->
-      <line x1="6.6" y1="9" x2="6.6" y2="15.8"></line>
-      <line x1="8.9" y1="9" x2="8.9" y2="13.6"></line>
-      <line x1="11.1" y1="9" x2="11.1" y2="11.7"></line>
-    </svg>`,
+//     // Rain Gutter & Downspout
+//     gutterDownspout: SVG(180, 150, `
+//   <path d="M50 82 H190"></path>
+//   <path d="M186 82 v56 h-18"></path>
+//   <circle cx="176" cy="138" r="2" fill="currentColor"></circle>
+//   <line x1="64" y1="88" x2="92" y2="88"></line>
+//   <line x1="102" y1="88" x2="130" y2="88"></line>
+//   `),
 
-    /* Window set with mullions & trim */
-    windowset: `<svg width="120" height="120" viewBox="0 0 24 24" ${ATTR}>
-      <rect x="4" y="6" width="16" height="12" rx="0.8"></rect>
-      <line x1="12" y1="6" x2="12" y2="18"></line>
-      <line x1="4" y1="12" x2="20" y2="12"></line>
-      <!-- sill & header trim -->
-      <line x1="3.2" y1="5.2" x2="20.8" y2="5.2"></line>
-      <line x1="3.2" y1="18.8" x2="20.8" y2="18.8"></line>
-    </svg>`
-  };
+//     // Deck with Pergola Outline
+//     deckPergola: SVG(190, 170, `
+//   <rect x="50" y="122" width="140" height="12"></rect>
+//   ${[0, 1, 2, 3, 4].map(i => `<rect x="${60 + i * 24}" y="72" width="6" height="50"></rect>`).join('')}
+//   <line x1="50" y1="72" x2="190" y2="72"></line>
+//   ${[0, 1, 2, 3, 4].map(i => `<line x1="${60 + i * 24}" y1="72" x2="${60 + i * 24}" y2="66"></line>`).join('')}
+//   `),
 
-  /* Place fewer/larger figures for a calmer, premium feel.
-     Tweak x/y (vw/vh) to frame whitespace in your sections. */
-  const FIGURES = [
-    { icon: 'facade', x: 18, y: 30, scale: 1.00, rotate: -2 },
-    { icon: 'windowset', x: 80, y: 26, scale: 0.98, rotate: 4 },
-    { icon: 'kitchen', x: 60, y: 74, scale: 1.06, rotate: 0 },
-    { icon: 'stair', x: 14, y: 66, scale: 1.08, rotate: -8 },
-    { icon: 'bathroom', x: 76, y: 71, scale: 1.02, rotate: 3 }
-  ];
+//     // Backyard Patio Pavers (grid)
+//     patioPavers: SVG(180, 150, `
+//   <rect x="62" y="82" width="120" height="56"></rect>
+//   ${[0, 1, 2, 3, 4].map(i => `<line x1="62" y1="${94 + i * 12}" x2="182" y2="${94 + i * 12}"></line>`).join('')}
+//   ${[0, 1, 2, 3, 4, 5].map(i => `<line x1="${74 + i * 18}" y1="82" x2="${74 + i * 18}" y2="138"></line>`).join('')}
+//   `),
 
-  function mountPremiumFigures() {
-    const holder = document.getElementById('universal-bg-figures');
-    if (!holder) return;
+//     // Garden Fence & Gate
+//     fenceGate: SVG(190, 160, `
+//   ${[0, 1, 2, 3, 4, 5, 6].map(i => `<rect x="${60 + i * 16}" y="72" width="6" height="70"></rect>`).join('')}
+//   <rect x="60" y="72" width="112" height="70"></rect>
+//   <line x1="116" y1="72" x2="116" y2="142"></line>
+//   <circle cx="120" cy="110" r="2" fill="currentColor"></circle>
+//   `),
 
-    holder.innerHTML = '';
-    FIGURES.forEach((f, i) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'figure';
-      wrap.style.left = f.x + 'vw';
-      wrap.style.top = f.y + 'vh';
-      wrap.style.transform = `translate(-50%, -50%) scale(${f.scale}) rotate(${f.rotate}deg)`;
-      wrap.style.transitionDelay = (i * 90) + 'ms';
-      wrap.innerHTML = ICONS[f.icon] || '';
-      holder.appendChild(wrap);
-      requestAnimationFrame(() => (wrap.style.opacity = '1'));
-    });
-  }
+//     // Plan Corner with Door Swing + Dimensions
+//     planCorner: SVG(190, 170, `
+//   <rect x="44" y="44" width="160" height="18"></rect>
+//   <rect x="44" y="44" width="18" height="160"></rect>
+//   <rect x="44" y="122" width="18" height="60" fill="none"></rect>
+//   <path d="M62 122 A60 60 0 0 1 122 182"></path>
+//   <line x1="44" y1="34" x2="204" y2="34"></line>
+//   <line x1="44" y1="34" x2="44" y2="30"></line><line x1="204" y1="34" x2="204" y2="30"></line>
+//   <line x1="34" y1="44" x2="34" y2="204"></line>
+//   <line x1="34" y1="44" x2="30" y2="44"></line><line x1="34" y1="204" x2="30" y2="204"></line>
+//   <path stroke-dasharray="4 4" d="M124 44 V204"></path>
+//   `),
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mountPremiumFigures, { once: true });
-  } else {
-    mountPremiumFigures();
-  }
-})();
+//     // Wall Section Cutaway (studs, drywall, sheathing, insulation)
+//     wallSection: SVG(200, 180, `
+//   <rect x="54" y="38" width="10" height="146"></rect>
+//   ${[0, 1, 2, 3].map(i => `<rect x="${78 + i * 32}" y="38" width="10" height="146"></rect>`).join('')}
+//   <rect x="54" y="38" width="136" height="12"></rect>
+//   <rect x="54" y="172" width="136" height="12"></rect>
+//   <rect x="40" y="38" width="14" height="146"></rect>     <!-- drywall -->
+//   <rect x="190" y="38" width="10" height="146"></rect>    <!-- sheathing -->
+//   ${[0, 1, 2, 3, 4].map(r => `<path d="M70 ${58 + r * 28} q10 6 20 0 t20 0 t20 0 t20 0"></path>`).join('')}
+//   <line x1="30" y1="184" x2="210" y2="184"></line>
+//   `),
+
+//     // Staircase & Handrail (treads, risers, rail)
+//     stair: SVG(190, 160, `
+//   <path d="M46 136 L112 72 L186 72"></path>
+//   <line x1="64" y1="120" x2="112" y2="120"></line>
+//   <line x1="82" y1="104" x2="130" y2="104"></line>
+//   <line x1="100" y1="88" x2="148" y2="88"></line>
+//   <path d="M48 70 L114 70 L166 54"></path> <!-- handrail -->
+//   `),
+
+//     // Kitchen Island & Cabinets (elevation)
+//     kitchen: SVG(190, 170, `
+//   <rect x="56" y="66" width="128" height="70" rx="4"></rect> <!-- base run -->
+//   <rect x="68" y="78" width="36" height="18"></rect>         <!-- sink -->
+//   <rect x="110" y="78" width="24" height="12"></rect>
+//   <rect x="140" y="78" width="24" height="12"></rect>
+//   <rect x="92" y="102" width="32" height="26"></rect>        <!-- drawers -->
+//   `),
+
+//     // Bathroom Vanity & Tiling
+//     bathroom: SVG(180, 170, `
+//   <rect x="60" y="60" width="120" height="28" rx="4"></rect>
+//   <rect x="52" y="104" width="136" height="42" rx="3"></rect>
+//   <line x1="120" y1="104" x2="120" y2="146"></line>
+//   <line x1="68" y1="118" x2="84" y2="118"></line>
+//   <line x1="156" y1="118" x2="172" y2="118"></line>
+//   ${[0, 1, 2, 3].map(r => `<line x1="60" y1="${92 + r * 6}" x2="180" y2="${92 + r * 6}"></line>`).join('')}
+//   `)
+//   };
+
+//   // Pool of realistic drawings
+//   const POOL = [
+//     'cozyHome', 'modernTwoStory', 'craftsmanFacade', 'brickRanch',
+//     'roofGable', 'entryDoorSidelights', 'bayWindow', 'garageDoorPanels',
+//     'gutterDownspout', 'deckPergola', 'patioPavers', 'fenceGate',
+//     'planCorner', 'wallSection', 'stair', 'kitchen', 'bathroom'
+//   ];
+
+//   // ---------- Random placement (avoids center & overlaps) ----------
+//   const rand = (a, b) => Math.random() * (b - a) + a;
+//   const pickSideX = () => (Math.random() < 0.5 ? rand(10, 36) : rand(64, 90)); // keep center cleaner
+//   const headerVH = () => {
+//     const h = document.querySelector('header'); if (!h) return 0;
+//     return (h.getBoundingClientRect().height / Math.max(1, innerHeight)) * 100;
+//   };
+//   function placeNonOverlap(n, margin = 8) {
+//     const pts = [], minDist = 18; let guard = 0;
+//     while (pts.length < n && guard < 800) {
+//       guard++;
+//       const x = pickSideX();
+//       const y = rand(margin + headerVH(), 100 - margin - 6);
+//       if (pts.every(p => Math.hypot((x - p.x) * 0.8, y - p.y) > minDist)) pts.push({ x, y });
+//     }
+//     return pts;
+//   }
+
+//   function mount() {
+//     const holder = document.getElementById('universal-bg-figures'); if (!holder) return;
+//     holder.innerHTML = '';
+
+//     const count = innerWidth < 520 ? 5 : innerWidth < 1024 ? 7 : 9;
+//     const names = [...POOL].sort(() => Math.random() - 0.5).slice(0, count);
+//     const spots = placeNonOverlap(names.length, 10);
+
+//     names.forEach((key, i) => {
+//       const wrap = document.createElement('div');
+//       wrap.className = 'figure';
+//       const pos = spots[i] || { x: pickSideX(), y: rand(18, 86) };
+//       const scale = rand(0.94, 1.12);
+//       const rot = rand(-8, 8);
+//       wrap.style.left = pos.x + 'vw';
+//       wrap.style.top = pos.y + 'vh';
+//       wrap.style.transform = `translate(-50%,-50%) scale(${scale}) rotate(${rot}deg)`;
+//       wrap.style.transitionDelay = (i * 80) + 'ms';
+//       wrap.innerHTML = FIGS[key];
+//       holder.appendChild(wrap);
+//       requestAnimationFrame(() => wrap.style.opacity = '1');
+//     });
+
+//     // quick manual reshuffle for you: run ARIT_BG_randomize() in console
+//     window.ARIT_BG_randomize = mount;
+//   }
+
+//   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount, { once: true });
+//   else mount();
+
+//   let R; addEventListener('resize', () => { clearTimeout(R); R = setTimeout(mount, 180); });
+// })();
