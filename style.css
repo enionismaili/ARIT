@@ -152,6 +152,11 @@ header {
     transition: 0.3s;
   }
 
+  .dark .hamburger .bar {
+    background: #fff !important;
+  }
+
+
   .nav-links {
     position: absolute;
     top: 100%;
