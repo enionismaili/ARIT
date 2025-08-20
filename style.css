@@ -1196,10 +1196,7 @@ button[type="submit"]:hover {
       url('assets/home/hero.png') center/cover no-repeat;
   }
 
-  .hero-content {
-    background: rgba(22, 27, 34, .55);
-    /* subtle glass */
-  }
+
 
   .btn {
     background-color: var(--primary);
